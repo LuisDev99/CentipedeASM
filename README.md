@@ -1,10 +1,6 @@
 # CentipedeASM
 Computer Organization Project - Centipede Arcade Videojuego
 
-![Fuente de la informacion de abajo](https://es.wikipedia.org/wiki/Centipede_(videojuego))
-
-![Screenshot](http://www.arcadedivision.com/content/img/200x150/centipede.jpg "OK")
-
 ## Descripcion
 
 Dispare a los insectos en un campo de hongos. El jugador es representado por un pequeño carácter con forma de insecto que aparece en la parte inferior de la pantalla. El jugador puede mover el carácter a través del área inferior de la pantalla con una trackball y disparar láseres a un gusano que avanza desde la parte superior de la pantalla hasta abajo a través del campo de hongos. El disparar a la cabeza del gusano hará que aparezca un hongo, mientras que disparar al cuerpo de este creará otro gusano.
