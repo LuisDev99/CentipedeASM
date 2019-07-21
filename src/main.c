@@ -25,6 +25,8 @@ void paintSpider(Object spider);
 void set_fungus_in_array_and_print(uint8_t index, uint8_t x, uint8_t y);
 void paintFungus();
 
+void masterCollisionDetector();
+
 bool bulletWasPressed = false;
 bool shouldBulletBePainted = false;
 
@@ -37,6 +39,8 @@ bool spiderDoneMovingRight = false;
 Object fungus[12];
 Object player, spider, bullet;
 
+uint8_t score;
+
 int main()
 {
 
@@ -45,6 +49,8 @@ int main()
 
     spider.x = 1;
     spider.y = 10;
+
+    score = 0;
 
     clear_screen();
     set_color(WHITE, BLACK);
@@ -62,6 +68,12 @@ int main()
     while (1)
     {
         delay_ms(50); //Regulates game movement
+
+        //Draw the score in the top left corner of the screen
+        set_cursor(0, 78);
+        put_char(TO_STR(score));
+
+        masterCollisionDetector(); //Detect collision in here or at the end of the loop?
 
         //Listen to player's keys and returns an Object to update this local player's variable location
         HandlePlayer();
@@ -286,6 +298,32 @@ void set_fungus_in_array_and_print(uint8_t index, uint8_t x, uint8_t y)
     fungus[index].y = y;
     set_cursor(y, x);
     put_char(4);
+}
+
+void masterCollisionDetector()
+{
+    //Detect if bullet collided with fongus
+    for (uint8_t i = 0; i < 12; i++)
+    {
+        if (bullet.x == fungus[i].x && bullet.y == fungus[i].y)
+        {
+            /* set_cursor(bullet.y, bullet.x);
+            puts("Collision boy"); */
+            score++;
+
+            /* Set the fungus position to 255 soo when the bullet hits it, 
+               it would no longer be invisible and keep registering collisions
+               eventhough it already did. In other words, this avoids the bullet
+               from hitting the same fungus over again */
+            fungus[i].x = fungus[i].y = 255;
+
+            //Clean the bullet
+            clearPosition(bullet);
+
+            //bullet.x = bullet.y = 0; //Avoid keep getting into this if statement more than once by resetting bullet's coordinates
+            shouldBulletBePainted = false;
+        }
+    }
 }
 
 void clearPosition(Object obj)
