@@ -12,34 +12,55 @@ typedef struct Objects
 
 void clearPosition(Object obj);
 Object HandlePlayer(Object player);
+Object HandleCentipede(Object centipede);
 Object HandleSpider(Object spider);
 Object HandleBullet(uint8_t objYPos, uint8_t objXPos, Object bullet);
 void paintPlayer(Object player);
 void paintBullet(Object bullet);
+void paintSpider(Object spider);
+void paintFungus();
 
 bool bulletWasPressed = false;
 bool shouldBulletBePainted = false;
 
+//Spider movement control
+bool spiderDoneMovingUp = false;
+bool spiderDoneMovingDown = false;
+bool spiderDoneMovingLeft = false;
+bool spiderDoneMovingRight = false;
+
 int main()
 {
     Object player, spider, bullet;
+
+    player.x = 40;
+    player.y = 25;
+
+    spider.x = 1;
+    spider.y = 10;
 
     clear_screen();
     set_color(WHITE, BLACK);
 
     set_cursor(15, 40);
 
-    //Print Spider
-    put_char(5);
-    put_char(6);
+    // //Print Spider
+    // put_char(5);
+    // put_char(6);
 
     keypad_init();
+
+    paintFungus();
+
     while (1)
     {
         delay_ms(50); //Regulates game movement
 
         //Listen to player's keys and returns an Object to update this local player's variable location
         player = HandlePlayer(player);
+
+        //Automated spider
+        spider = HandleSpider(spider);
 
         if (shouldBulletBePainted)
         {
@@ -53,7 +74,7 @@ int main()
             }
             else
             {
-                //Else, keep grabbing moving the bullet up until it reaches the top end screen
+                //Else, keep grabbing the bullet's current position and moving the bullet up until it reaches the top end screen
                 clearPosition(bullet);
                 bullet.y--;
                 bullet = HandleBullet(bullet.y, bullet.x, bullet);
@@ -63,6 +84,7 @@ int main()
         }
 
         paintPlayer(player);
+        paintSpider(spider);
     }
 
     return 0;
@@ -85,15 +107,87 @@ Object HandleBullet(uint8_t objYPos, uint8_t objXPos, Object bullet)
     return bullet;
 }
 
+void paintFungus()
+{
+    /* Paint random fungus accross all screen */
+
+    uint8_t fgColor, bgColor;
+    get_color(&fgColor, &bgColor);
+
+    set_color(LIGHT_MAGENTA, BLACK);
+
+    set_cursor(3, 3);
+    put_char(4);
+
+    set_cursor(10, 10);
+    put_char(4);
+
+    set_cursor(13, 10);
+    put_char(4);
+
+    set_cursor(11, 15);
+    put_char(4);
+
+    set_cursor(14, 17);
+    put_char(4);
+
+    set_cursor(20, 44);
+    put_char(4);
+
+    set_cursor(22, 70);
+    put_char(4);
+
+    set_cursor(21, 77);
+    put_char(4);
+
+    set_cursor(27, 50);
+    put_char(4);
+
+    set_cursor(3, 50);
+    put_char(4);
+
+    set_cursor(2, 60);
+    put_char(4);
+
+    set_cursor(5, 73);
+    put_char(4);
+
+    //Restore color
+    set_color(fgColor, bgColor);
+}
+
+Object HandleCentipede(Object centipede)
+{
+}
+
 Object HandleSpider(Object spider)
 {
+    if (spider.y == 0)
+        spiderDoneMovingUp = true;
+
+    if (spiderDoneMovingUp)
+    {
+        spider.x++;
+        spiderDoneMovingRight = true;
+        spiderDoneMovingDown = false;
+    }
+
+    if (spiderDoneMovingDown)
+    {
+    }
+
+    return spider;
 }
 
 Object HandlePlayer(Object player)
 {
+    /* This functions whenever it gets called, listens to the keyboard,
+       and depending on the key, it will update the player's x and y
+       and return it soo that the player variable that is in main gets updated  
+       with the new x and y. This function also handles if the player shot a
+       bullet by setting a global variable */
+
     uint8_t k = keypad_getkey();
-    set_cursor(player.x + 1, 1);
-    //put_char(TO_STR(player.x));
 
     if (k != 0)
     {
@@ -174,8 +268,26 @@ void paintBullet(Object bullet)
     set_color(fgColor, bgColor);
 }
 
+void paintSpider(Object spider)
+{
+
+    uint8_t fgColor, bgColor;
+    get_color(&fgColor, &bgColor);
+
+    set_color(BROWN, BLACK);
+
+    set_cursor(spider.y, spider.x);
+
+    put_char(5);
+    put_char(6);
+
+    set_color(fgColor, bgColor);
+}
+
 void clearPosition(Object obj)
 {
+    /* Takes in any object and will write a null character in its location */
+
     //Clear last x and y
     set_cursor(obj.y, obj.x);
     put_char(255); //Write to that position an empty char
