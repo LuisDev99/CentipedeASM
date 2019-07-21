@@ -11,13 +11,17 @@ typedef struct Objects
 } Object;
 
 void clearPosition(Object obj);
+
 Object HandlePlayer(Object player);
 Object HandleCentipede(Object centipede);
 Object HandleSpider(Object spider);
 Object HandleBullet(uint8_t objYPos, uint8_t objXPos, Object bullet);
+
 void paintPlayer(Object player);
 void paintBullet(Object bullet);
 void paintSpider(Object spider);
+
+void set_fungus_in_array_and_print(uint8_t index, uint8_t x, uint8_t y);
 void paintFungus();
 
 bool bulletWasPressed = false;
@@ -28,6 +32,8 @@ bool spiderDoneMovingUp = false;
 bool spiderDoneMovingDown = false;
 bool spiderDoneMovingLeft = false;
 bool spiderDoneMovingRight = false;
+
+Object fungus[12];
 
 int main()
 {
@@ -116,44 +122,47 @@ void paintFungus()
 
     set_color(LIGHT_MAGENTA, BLACK);
 
+    //Original smelly code
+    /*fungus[0].x = 3;
+    fungus[0].y = 3;
     set_cursor(3, 3);
-    put_char(4);
+    put_char(4); */
 
-    set_cursor(10, 10);
-    put_char(4);
+    //New Code this
+    set_fungus_in_array_and_print(0, 3, 3);
 
-    set_cursor(13, 10);
-    put_char(4);
+    set_fungus_in_array_and_print(1, 10, 10);
 
-    set_cursor(11, 15);
-    put_char(4);
+    set_fungus_in_array_and_print(2, 10, 13);
 
-    set_cursor(14, 17);
-    put_char(4);
+    set_fungus_in_array_and_print(3, 15, 11);
 
-    set_cursor(20, 44);
-    put_char(4);
+    set_fungus_in_array_and_print(4, 17, 14);
 
-    set_cursor(22, 70);
-    put_char(4);
+    set_fungus_in_array_and_print(5, 44, 20);
 
-    set_cursor(21, 77);
-    put_char(4);
+    set_fungus_in_array_and_print(6, 70, 22);
 
-    set_cursor(27, 50);
-    put_char(4);
+    set_fungus_in_array_and_print(7, 77, 21);
 
-    set_cursor(3, 50);
-    put_char(4);
+    set_fungus_in_array_and_print(8, 50, 27);
 
-    set_cursor(2, 60);
-    put_char(4);
+    set_fungus_in_array_and_print(9, 50, 3);
 
-    set_cursor(5, 73);
-    put_char(4);
+    set_fungus_in_array_and_print(10, 60, 2);
+
+    set_fungus_in_array_and_print(11, 73, 5);
 
     //Restore color
     set_color(fgColor, bgColor);
+}
+
+void set_fungus_in_array_and_print(uint8_t index, uint8_t x, uint8_t y)
+{
+    fungus[index].x = x;
+    fungus[index].y = y;
+    set_cursor(y, x);
+    put_char(4);
 }
 
 Object HandleCentipede(Object centipede)
