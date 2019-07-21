@@ -47,7 +47,9 @@ void paintCentipede(CentipedeObj centipede);
 void set_fungus_in_array_and_print(uint8_t index, uint8_t x, uint8_t y);
 void initializeCentipede();
 
-void masterCollisionDetector();
+void bulletCollisionDetector();
+
+bool is_going_to_hit_a_fungus(uint8_t objX, uint8_t objY);
 
 bool bulletWasPressed = false;
 bool shouldBulletBePainted = false;
@@ -80,11 +82,6 @@ int main()
     set_color(WHITE, BLACK);
 
     set_cursor(15, 40);
-
-    // //Print Spider
-    // put_char(5);
-    // put_char(6);
-
     keypad_init();
 
     paintFungus();
@@ -98,7 +95,7 @@ int main()
         set_cursor(0, 78);
         put_char(TO_STR(score));
 
-        masterCollisionDetector(); //Detect collision in here or at the end of the loop?
+        bulletCollisionDetector(); //Detect collision in here or at the end of the loop?
 
         //Listen to player's keys and returns an Object to update this local player's variable location
         HandlePlayer();
@@ -158,6 +155,9 @@ void HandleCentipede()
     {
         clearPosition(centipede_body[i].location);
 
+        if (centipede_body[i].isDead)
+            continue;
+
         if (centipede_body[i].currentDirection == LEFT)
         {
             //TODO: in here it should handle collision in fungus, in the first if
@@ -166,7 +166,7 @@ void HandleCentipede()
                to the left until it reaches the end of the screen, and when
                it does, make it move downwards by 1 and set the current direction 
                to the right */
-            if (centipede_body[i].location.x == 0)
+            if (centipede_body[i].location.x == 0 || is_going_to_hit_a_fungus(centipede_body[i].location.x - 1, centipede_body[i].location.y))
             {
                 centipede_body[i].location.y++;
                 centipede_body[i].previousDirection = centipede_body[i].currentDirection;
@@ -180,7 +180,8 @@ void HandleCentipede()
         }
         else if (centipede_body[i].currentDirection == RIGHT)
         {
-            if (centipede_body[i].location.x == (MAX_COLS - 1))
+
+            if (centipede_body[i].location.x == (MAX_COLS - 1) || is_going_to_hit_a_fungus(centipede_body[i].location.x + 1, centipede_body[i].location.y))
             {
                 centipede_body[i].location.y++;
                 centipede_body[i].previousDirection = centipede_body[i].currentDirection;
@@ -247,8 +248,14 @@ void HandlePlayer()
 
             if (player.x != 0)
             {
-                clearPosition(player);
-                player.x--;
+
+                //If the player wants to move to the left but there's a fungus, then the player
+                //cant move to the left
+                if (is_going_to_hit_a_fungus(player.x - 1, player.y) == false)
+                {
+                    clearPosition(player);
+                    player.x--;
+                }
             }
 
             break;
@@ -257,8 +264,11 @@ void HandlePlayer()
 
             if (player.x < MAX_COLS - 1)
             {
-                clearPosition(player);
-                player.x++;
+                if (is_going_to_hit_a_fungus(player.x + 1, player.y) == false)
+                {
+                    clearPosition(player);
+                    player.x++;
+                }
             }
 
             break;
@@ -267,16 +277,22 @@ void HandlePlayer()
 
             if (player.y < MAX_ROWS - 1)
             {
-                clearPosition(player);
-                player.y++;
+                if (is_going_to_hit_a_fungus(player.x, player.y + 1) == false)
+                {
+                    clearPosition(player);
+                    player.y++;
+                }
             }
             break;
 
         case 4: //Up
             if (player.y != 0)
             {
-                clearPosition(player);
-                player.y--;
+                if (is_going_to_hit_a_fungus(player.x, player.y - 1) == false)
+                {
+                    clearPosition(player);
+                    player.y--;
+                }
             }
             break;
 
@@ -424,7 +440,7 @@ void paintCentipede(CentipedeObj centipede)
     {
         if (centipede.isHead)
         {
-            put_char(10);
+            put_char(22);
         }
         else
         {
@@ -468,7 +484,22 @@ void initializeCentipede()
     }
 }
 
-void masterCollisionDetector()
+bool is_going_to_hit_a_fungus(uint8_t objX, uint8_t objY)
+{
+    /* use this function to tell whether the object to check will hit a fungus in advanced */
+
+    for (uint8_t i = 0; i < AMOUNT_OF_FUNGUS; i++)
+    {
+        if (fungus[i].x == objX && fungus[i].y == objY)
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+void bulletCollisionDetector()
 {
     /* CHECKING COLLISION ON FUNGUS SECTION */
 
@@ -489,9 +520,8 @@ void masterCollisionDetector()
 
             //Clean the bullet
             clearPosition(bullet);
-
-            //bullet.x = bullet.y = 0; //Avoid keep getting into this if statement more than once by resetting bullet's coordinates
             shouldBulletBePainted = false;
+
             return;
         }
     }
@@ -510,7 +540,7 @@ void masterCollisionDetector()
 
         score++;
 
-        //Pick a random location for spider by using the register counter random current value
+        //Pick a new random location for spider by using the register counter random current value
         spider.x = (*MS_COUNTER_REG_ADDR | 255);
 
         //If the random value was greater than the screen size, then give it a hardcoded x location to prevent a bug
@@ -521,7 +551,7 @@ void masterCollisionDetector()
         put_char(TO_STR(spider.x));
 
         //Set a place to the bullet soo that it doesnt keep registering
-        bullet.x = bullet.y = 0;
+        bullet.x = bullet.y = 255;
     }
 
     /* CHECKING COLLISION ON CENTIPEDE SECTION */
