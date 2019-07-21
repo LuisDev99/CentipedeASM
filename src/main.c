@@ -123,10 +123,13 @@ int main()
                 //Else, keep grabbing the bullet's current position and moving the bullet up until it reaches the top end screen
                 clearPosition(bullet);
                 bullet.y--;
+
                 HandleBullet(bullet.y, bullet.x);
             }
 
-            paintBullet(bullet);
+            //Avoid drawing the bullet eventhough it already finish reaching the top
+            if (bullet.y != 0)
+                paintBullet(bullet);
         }
 
         paintPlayer(player);
@@ -140,9 +143,9 @@ void HandleBullet(uint8_t objYPos, uint8_t objXPos)
 {
     if (objYPos == 0)
     {
+
         //If the bullet reached the top end screen, the bullet shouldnt be painted anymore
         shouldBulletBePainted = false;
-        clearPosition(bullet);
 
         return;
     }
@@ -514,7 +517,7 @@ void bulletCollisionDetector()
             puts("Collision boy"); */
             score++;
 
-            /* Set the fungus position to 255 soo when the bullet hits it, 
+            /* Set the fungus position to 250 soo when the bullet hits it, 
                it would no longer be invisible and keep registering collisions
                eventhough it already did. In other words, this avoids the bullet
                from hitting the same fungus over again */
@@ -559,6 +562,7 @@ void bulletCollisionDetector()
     }
 
     /* CHECKING COLLISION ON CENTIPEDE SECTION */
+
     for (uint8_t i = 0; i < CENTIPEDE_BODY_SIZE; i++)
     {
         if (centipede_body[i].isDead)
@@ -571,7 +575,18 @@ void bulletCollisionDetector()
             //Kill Centipede
             clearPosition(centipede_body[i].location);
             centipede_body[i].isDead = true;
-            centipede_body[i].location.x = centipede_body[i].location.y = 255;
+            uint8_t prevX = centipede_body[i].location.x;
+            centipede_body[i].location.x = centipede_body[i].location.y = 199;
+
+            //Change the rest of the centipede's direction
+            for (uint8_t j = i + 1; j < CENTIPEDE_BODY_SIZE; j++)
+            {
+                clearPosition(centipede_body[j].location);
+                centipede_body[j].location.y = centipede_body[j].location.y + 1;
+                centipede_body[j].location.x = prevX + j;
+                centipede_body[j].previousDirection = centipede_body[j].currentDirection;
+                centipede_body[j].currentDirection = DOWN;
+            }
 
             //Clean the bullet
             clearPosition(bullet);
