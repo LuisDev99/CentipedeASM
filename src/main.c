@@ -12,10 +12,11 @@ typedef struct Objects
 
 void clearPosition(Object obj);
 
-Object HandlePlayer(Object player);
+void HandlePlayer();
+void HandleSpider();
+void HandleBullet(uint8_t objYPos, uint8_t objXPos);
+
 Object HandleCentipede(Object centipede);
-Object HandleSpider(Object spider);
-Object HandleBullet(uint8_t objYPos, uint8_t objXPos, Object bullet);
 
 void paintPlayer(Object player);
 void paintBullet(Object bullet);
@@ -34,10 +35,10 @@ bool spiderDoneMovingLeft = false;
 bool spiderDoneMovingRight = false;
 
 Object fungus[12];
+Object player, spider, bullet;
 
 int main()
 {
-    Object player, spider, bullet;
 
     player.x = 40;
     player.y = 25;
@@ -63,10 +64,10 @@ int main()
         delay_ms(50); //Regulates game movement
 
         //Listen to player's keys and returns an Object to update this local player's variable location
-        player = HandlePlayer(player);
+        HandlePlayer();
 
         //Automated spider
-        spider = HandleSpider(spider);
+        HandleSpider();
 
         if (shouldBulletBePainted)
         {
@@ -75,7 +76,7 @@ int main()
             if (bulletWasPressed)
             {
                 clearPosition(bullet);
-                bullet = HandleBullet(player.y - 1, player.x, bullet);
+                HandleBullet(player.y - 1, player.x);
                 bulletWasPressed = false;
             }
             else
@@ -83,7 +84,7 @@ int main()
                 //Else, keep grabbing the bullet's current position and moving the bullet up until it reaches the top end screen
                 clearPosition(bullet);
                 bullet.y--;
-                bullet = HandleBullet(bullet.y, bullet.x, bullet);
+                HandleBullet(bullet.y, bullet.x);
             }
 
             paintBullet(bullet);
@@ -96,7 +97,7 @@ int main()
     return 0;
 }
 
-Object HandleBullet(uint8_t objYPos, uint8_t objXPos, Object bullet)
+void HandleBullet(uint8_t objYPos, uint8_t objXPos)
 {
     if (objYPos == 0)
     {
@@ -104,72 +105,18 @@ Object HandleBullet(uint8_t objYPos, uint8_t objXPos, Object bullet)
         shouldBulletBePainted = false;
         clearPosition(bullet);
 
-        return bullet;
+        return;
     }
 
     bullet.y = objYPos;
     bullet.x = objXPos;
-
-    return bullet;
-}
-
-void paintFungus()
-{
-    /* Paint random fungus accross all screen */
-
-    uint8_t fgColor, bgColor;
-    get_color(&fgColor, &bgColor);
-
-    set_color(LIGHT_MAGENTA, BLACK);
-
-    //Original smelly code
-    /*fungus[0].x = 3;
-    fungus[0].y = 3;
-    set_cursor(3, 3);
-    put_char(4); */
-
-    //New Code this
-    set_fungus_in_array_and_print(0, 3, 3);
-
-    set_fungus_in_array_and_print(1, 10, 10);
-
-    set_fungus_in_array_and_print(2, 10, 13);
-
-    set_fungus_in_array_and_print(3, 15, 11);
-
-    set_fungus_in_array_and_print(4, 17, 14);
-
-    set_fungus_in_array_and_print(5, 44, 20);
-
-    set_fungus_in_array_and_print(6, 70, 22);
-
-    set_fungus_in_array_and_print(7, 77, 21);
-
-    set_fungus_in_array_and_print(8, 50, 27);
-
-    set_fungus_in_array_and_print(9, 50, 3);
-
-    set_fungus_in_array_and_print(10, 60, 2);
-
-    set_fungus_in_array_and_print(11, 73, 5);
-
-    //Restore color
-    set_color(fgColor, bgColor);
-}
-
-void set_fungus_in_array_and_print(uint8_t index, uint8_t x, uint8_t y)
-{
-    fungus[index].x = x;
-    fungus[index].y = y;
-    set_cursor(y, x);
-    put_char(4);
 }
 
 Object HandleCentipede(Object centipede)
 {
 }
 
-Object HandleSpider(Object spider)
+void HandleSpider()
 {
     if (spider.y == 0)
         spiderDoneMovingUp = true;
@@ -184,11 +131,9 @@ Object HandleSpider(Object spider)
     if (spiderDoneMovingDown)
     {
     }
-
-    return spider;
 }
 
-Object HandlePlayer(Object player)
+void HandlePlayer()
 {
     /* This functions whenever it gets called, listens to the keyboard,
        and depending on the key, it will update the player's x and y
@@ -246,8 +191,6 @@ Object HandlePlayer(Object player)
             break;
         }
     }
-
-    return player;
 }
 
 void paintPlayer(Object player)
@@ -291,6 +234,58 @@ void paintSpider(Object spider)
     put_char(6);
 
     set_color(fgColor, bgColor);
+}
+
+void paintFungus()
+{
+    /* Paint random fungus accross all screen */
+
+    uint8_t fgColor, bgColor;
+    get_color(&fgColor, &bgColor);
+
+    set_color(LIGHT_MAGENTA, BLACK);
+
+    //Original smelly code
+    /*fungus[0].x = 3;
+    fungus[0].y = 3;
+    set_cursor(3, 3);
+    put_char(4); */
+
+    //New Code this
+    set_fungus_in_array_and_print(0, 3, 3);
+
+    set_fungus_in_array_and_print(1, 10, 10);
+
+    set_fungus_in_array_and_print(2, 10, 13);
+
+    set_fungus_in_array_and_print(3, 15, 11);
+
+    set_fungus_in_array_and_print(4, 17, 14);
+
+    set_fungus_in_array_and_print(5, 44, 20);
+
+    set_fungus_in_array_and_print(6, 70, 22);
+
+    set_fungus_in_array_and_print(7, 77, 21);
+
+    set_fungus_in_array_and_print(8, 50, 27);
+
+    set_fungus_in_array_and_print(9, 50, 3);
+
+    set_fungus_in_array_and_print(10, 60, 2);
+
+    set_fungus_in_array_and_print(11, 73, 5);
+
+    //Restore color
+    set_color(fgColor, bgColor);
+}
+
+void set_fungus_in_array_and_print(uint8_t index, uint8_t x, uint8_t y)
+{
+    fungus[index].x = x;
+    fungus[index].y = y;
+    set_cursor(y, x);
+    put_char(4);
 }
 
 void clearPosition(Object obj)
