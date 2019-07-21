@@ -73,6 +73,8 @@ int main()
     player.x = 40;
     player.y = 25;
 
+    bullet.x = bullet.y = 210; //Give a random location outside 80x60 so that it wont register any collision
+
     spider.x = 1;
     spider.y = 10;
 
@@ -97,19 +99,19 @@ int main()
 
         bulletCollisionDetector(); //Detect collision in here or at the end of the loop?
 
-        //Listen to player's keys and returns an Object to update this local player's variable location
+        //Listen to player's keys
         HandlePlayer();
 
         //Automated spider
         HandleSpider();
 
-        //Handle Centipede
+        //Automated Centipede
         HandleCentipede();
 
         if (shouldBulletBePainted)
         {
 
-            //If the player shot a bullet, then call handle bullet but using the player's location to spawn new bullet
+            //If the player shot a bullet, then call handle bullet but using the player's location to spawn new bullet on top of the player
             if (bulletWasPressed)
             {
                 clearPosition(bullet);
@@ -153,14 +155,14 @@ void HandleCentipede()
 {
     for (uint8_t i = 0; i < CENTIPEDE_BODY_SIZE; i++)
     {
-        clearPosition(centipede_body[i].location);
 
         if (centipede_body[i].isDead)
             continue;
 
+        clearPosition(centipede_body[i].location);
+
         if (centipede_body[i].currentDirection == LEFT)
         {
-            //TODO: in here it should handle collision in fungus, in the first if
 
             /* If the centipede was coming from the left, keep moving it 
                to the left until it reaches the end of the screen, and when
@@ -516,10 +518,11 @@ void bulletCollisionDetector()
                it would no longer be invisible and keep registering collisions
                eventhough it already did. In other words, this avoids the bullet
                from hitting the same fungus over again */
-            fungus[i].x = fungus[i].y = 255;
+            fungus[i].x = fungus[i].y = 250;
 
             //Clean the bullet
             clearPosition(bullet);
+            bullet.x = bullet.y = 230; //Out of bound location soo that it wont register with anything else
             shouldBulletBePainted = false;
 
             return;
@@ -531,7 +534,6 @@ void bulletCollisionDetector()
     //The spider takes two column spaces, soo check both of them to detect collision
     if ((bullet.x == spider.x || bullet.x == spider.x + 1) && bullet.y == spider.y)
     {
-        shouldBulletBePainted = false;
 
         //spider takes two column spaces long, so clear those two spaces
         clearPosition(spider);
@@ -550,12 +552,33 @@ void bulletCollisionDetector()
         set_cursor(1, 78);
         put_char(TO_STR(spider.x));
 
-        //Set a place to the bullet soo that it doesnt keep registering
-        bullet.x = bullet.y = 255;
+        //Clean the bullet
+        clearPosition(bullet);
+        bullet.x = bullet.y = 209; //Out of bound location soo that it wont register with anything else
+        shouldBulletBePainted = false;
     }
 
     /* CHECKING COLLISION ON CENTIPEDE SECTION */
+    for (uint8_t i = 0; i < CENTIPEDE_BODY_SIZE; i++)
+    {
+        if (centipede_body[i].isDead)
+            continue;
 
+        if (bullet.x == centipede_body[i].location.x && bullet.y == centipede_body[i].location.y)
+        {
+            score++;
+
+            //Kill Centipede
+            clearPosition(centipede_body[i].location);
+            centipede_body[i].isDead = true;
+            centipede_body[i].location.x = centipede_body[i].location.y = 255;
+
+            //Clean the bullet
+            clearPosition(bullet);
+            bullet.x = bullet.y = 208; //Out of bound location soo that it wont register with anything else
+            shouldBulletBePainted = false;
+        }
+    }
     //
 }
 
