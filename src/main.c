@@ -10,7 +10,9 @@ enum Directions
     UP = 0,
     DOWN = 1,
     LEFT = 2,
-    RIGHT = 3
+    RIGHT = 3,
+    COMING_UP = 4,
+    COMING_DOWN = 5
 };
 
 typedef struct Objects
@@ -26,7 +28,7 @@ typedef struct CentipedesObjects
     bool isDead;
     bool isHead;
 
-    enum Directions currentDirection, previousDirection;
+    enum Directions currentDirection, previousDirection, isComing;
 
 } CentipedeObj;
 
@@ -164,55 +166,158 @@ void HandleCentipede()
 
         clearPosition(centipede_body[i].location);
 
-        if (centipede_body[i].currentDirection == LEFT)
+        if (centipede_body[i].isComing == COMING_DOWN)
         {
 
-            /* If the centipede was coming from the left, keep moving it 
+            if (centipede_body[i].currentDirection == LEFT)
+            {
+
+                /* If the centipede was coming from the left, keep moving it 
                to the left until it reaches the end of the screen, and when
                it does, make it move downwards by 1 and set the current direction 
                to the right */
-            if (centipede_body[i].location.x == 0 || is_going_to_hit_a_fungus(centipede_body[i].location.x - 1, centipede_body[i].location.y))
-            {
-                centipede_body[i].location.y++;
-                centipede_body[i].previousDirection = centipede_body[i].currentDirection;
-                centipede_body[i].currentDirection = DOWN;
-            }
-            else
-            {
-                centipede_body[i].location.x--;
-                centipede_body[i].currentDirection = LEFT;
-            }
-        }
-        else if (centipede_body[i].currentDirection == RIGHT)
-        {
+                if (centipede_body[i].location.x == 0 || is_going_to_hit_a_fungus(centipede_body[i].location.x - 1, centipede_body[i].location.y))
+                {
+                    //check if we have reach the bottom of the screen, if we did, start
+                    //moving the centipede up
+                    if (centipede_body[i].location.y + 1 == MAX_ROWS)
+                    {
+                        centipede_body[i].location.y--;
+                        centipede_body[i].isComing = COMING_UP;
+                        centipede_body[i].previousDirection = centipede_body[i].currentDirection;
+                        centipede_body[i].currentDirection = UP;
+                    }
+                    else
+                    {
 
-            if (centipede_body[i].location.x == (MAX_COLS - 1) || is_going_to_hit_a_fungus(centipede_body[i].location.x + 1, centipede_body[i].location.y))
-            {
-                centipede_body[i].location.y++;
-                centipede_body[i].previousDirection = centipede_body[i].currentDirection;
-                centipede_body[i].currentDirection = DOWN;
+                        centipede_body[i].location.y++;
+                        centipede_body[i].previousDirection = centipede_body[i].currentDirection;
+                        centipede_body[i].currentDirection = DOWN;
+                    }
+                }
+                else
+                {
+                    centipede_body[i].location.x--;
+                    centipede_body[i].currentDirection = LEFT;
+                }
             }
-            else
+            else if (centipede_body[i].currentDirection == RIGHT)
             {
-                centipede_body[i].location.x++;
-                centipede_body[i].currentDirection = RIGHT;
+
+                if (centipede_body[i].location.x == (MAX_COLS - 1) || is_going_to_hit_a_fungus(centipede_body[i].location.x + 1, centipede_body[i].location.y))
+                {
+                    if (centipede_body[i].location.y + 1 == MAX_ROWS)
+                    {
+                        centipede_body[i].location.y--;
+                        centipede_body[i].isComing = COMING_UP;
+                        centipede_body[i].previousDirection = centipede_body[i].currentDirection;
+                        centipede_body[i].currentDirection = UP;
+                    }
+                    else
+                    {
+                        centipede_body[i].location.y++;
+                        centipede_body[i].previousDirection = centipede_body[i].currentDirection;
+                        centipede_body[i].currentDirection = DOWN;
+                    }
+                }
+                else
+                {
+                    centipede_body[i].location.x++;
+                    centipede_body[i].currentDirection = RIGHT;
+                }
+            }
+            else if (centipede_body[i].currentDirection == DOWN)
+            {
+                //If the centipede is currently going down, give it
+                //a new direction that is opposite from where it came from
+                if (centipede_body[i].previousDirection == LEFT)
+                {
+                    centipede_body[i].currentDirection = RIGHT;
+                    centipede_body[i].location.x++;
+                }
+                else
+                {
+                    centipede_body[i].currentDirection = LEFT;
+                    centipede_body[i].location.x--;
+                }
             }
         }
-        else if (centipede_body[i].currentDirection == DOWN)
+        else
         {
-            //If the centipede is currently going down, give it
-            //a new direction that is opposite from where it came from
-            if (centipede_body[i].previousDirection == LEFT)
+            if (centipede_body[i].currentDirection == LEFT)
             {
-                centipede_body[i].currentDirection = RIGHT;
-                centipede_body[i].location.x++;
+
+                /* If the centipede was coming from the left, keep moving it 
+               to the left until it reaches the end of the screen, and when
+               it does, make it move downwards by 1 and set the current direction 
+               to the right */
+                if (centipede_body[i].location.x == 0 || is_going_to_hit_a_fungus(centipede_body[i].location.x - 1, centipede_body[i].location.y))
+                {
+                    //check if we have reach the bottom of the screen, if we did, start
+                    //moving the centipede up
+                    if (centipede_body[i].location.y - 1 == 0)
+                    {
+                        centipede_body[i].location.y++;
+                        centipede_body[i].isComing = COMING_DOWN;
+                        centipede_body[i].previousDirection = centipede_body[i].currentDirection;
+                        centipede_body[i].currentDirection = DOWN;
+                    }
+                    else
+                    {
+
+                        centipede_body[i].location.y--;
+                        centipede_body[i].previousDirection = centipede_body[i].currentDirection;
+                        centipede_body[i].currentDirection = UP;
+                    }
+                }
+                else
+                {
+                    centipede_body[i].location.x--;
+                    centipede_body[i].currentDirection = LEFT;
+                }
             }
-            else
+            else if (centipede_body[i].currentDirection == RIGHT)
             {
-                centipede_body[i].currentDirection = LEFT;
-                centipede_body[i].location.x--;
+
+                if (centipede_body[i].location.x == (MAX_COLS - 1) || is_going_to_hit_a_fungus(centipede_body[i].location.x + 1, centipede_body[i].location.y))
+                {
+                    if (centipede_body[i].location.y - 1 == 0)
+                    {
+                        centipede_body[i].location.y++;
+                        centipede_body[i].isComing = COMING_DOWN;
+                        centipede_body[i].previousDirection = centipede_body[i].currentDirection;
+                        centipede_body[i].currentDirection = DOWN;
+                    }
+                    else
+                    {
+                        centipede_body[i].location.y--;
+                        centipede_body[i].previousDirection = centipede_body[i].currentDirection;
+                        centipede_body[i].currentDirection = UP;
+                    }
+                }
+                else
+                {
+                    centipede_body[i].location.x++;
+                    centipede_body[i].currentDirection = RIGHT;
+                }
+            }
+            else if (centipede_body[i].currentDirection == UP)
+            {
+                //If the centipede is currently going down, give it
+                //a new direction that is opposite from where it came from
+                if (centipede_body[i].previousDirection == LEFT)
+                {
+                    centipede_body[i].currentDirection = RIGHT;
+                    centipede_body[i].location.x++;
+                }
+                else
+                {
+                    centipede_body[i].currentDirection = LEFT;
+                    centipede_body[i].location.x--;
+                }
             }
         }
+
         paintCentipede(centipede_body[i]);
     }
 }
@@ -485,6 +590,7 @@ void initializeCentipede()
 
         centipede_body[i].currentDirection = LEFT;
         centipede_body[i].previousDirection = LEFT;
+        centipede_body[i].isComing = COMING_DOWN;
         centipede_body[i].isDead = false;
     }
 }
