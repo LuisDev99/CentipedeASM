@@ -322,7 +322,36 @@ void masterCollisionDetector()
 
             //bullet.x = bullet.y = 0; //Avoid keep getting into this if statement more than once by resetting bullet's coordinates
             shouldBulletBePainted = false;
+            return;
         }
+    }
+
+    //If the bullet didnt hit any fungus, keep checking
+
+    //The spider takes two column spaces, soo check both of them to detect collision
+    if ((bullet.x == spider.x || bullet.x == spider.x + 1) && bullet.y == spider.y)
+    {
+        shouldBulletBePainted = false;
+
+        //spider takes two column spaces long, so clear those two spaces
+        clearPosition(spider);
+        spider.x++;
+        clearPosition(spider);
+
+        score++;
+
+        //Pick a random location for spider by using the register counter random current value
+        spider.x = (*MS_COUNTER_REG_ADDR & 31);
+
+        //If the random value was greater than the screen size, then give it a hardcoded x location to prevent a bug
+        if (spider.x >= MAX_COLS)
+            spider.x = 40;
+
+        set_cursor(1, 78);
+        put_char(TO_STR(spider.x));
+
+        //Set a place to the bullet soo that it doesnt keep registering
+        bullet.x = bullet.y = 0;
     }
 }
 
