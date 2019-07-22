@@ -2,7 +2,8 @@
 #include <keypad.h>
 
 #define TO_STR(ch) ((((ch) >= 0) && ((ch) <= 9)) ? (48 + (ch)) : ('a' + ((ch)-10)))
-#define AMOUNT_OF_FUNGUS 12
+
+#define AMOUNT_OF_FUNGUS 30
 #define CENTIPEDE_BODY_SIZE 8
 
 enum Directions
@@ -155,10 +156,8 @@ void HandleBullet(uint8_t objYPos, uint8_t objXPos)
 {
     if (objYPos == 0)
     {
-
         //If the bullet reached the top end screen, the bullet shouldnt be painted anymore
         shouldBulletBePainted = false;
-
         return;
     }
 
@@ -568,28 +567,39 @@ void paintFungus()
 
     //New Code this
     set_fungus_in_array_and_print(0, 3, 3);
-
     set_fungus_in_array_and_print(1, 10, 10);
-
     set_fungus_in_array_and_print(2, 10, 13);
-
     set_fungus_in_array_and_print(3, 15, 11);
-
     set_fungus_in_array_and_print(4, 17, 14);
-
     set_fungus_in_array_and_print(5, 44, 20);
-
     set_fungus_in_array_and_print(6, 70, 22);
-
     set_fungus_in_array_and_print(7, 77, 21);
-
     set_fungus_in_array_and_print(8, 50, 27);
-
-    set_fungus_in_array_and_print(9, 50, 3);
-
+    set_fungus_in_array_and_print(9, 40, 3);
     set_fungus_in_array_and_print(10, 60, 2);
-
     set_fungus_in_array_and_print(11, 73, 5);
+
+    //12-24
+    set_fungus_in_array_and_print(12, 21, 3);
+    set_fungus_in_array_and_print(13, 15, 20);
+    set_fungus_in_array_and_print(14, 56, 7);
+    set_fungus_in_array_and_print(15, 30, 23);
+    set_fungus_in_array_and_print(16, 19, 27);
+    set_fungus_in_array_and_print(17, 78, 5);
+    set_fungus_in_array_and_print(18, 47, 21);
+    set_fungus_in_array_and_print(19, 67, 15);
+    set_fungus_in_array_and_print(20, 31, 18);
+    set_fungus_in_array_and_print(21, 53, 19);
+    set_fungus_in_array_and_print(22, 28, 10);
+    set_fungus_in_array_and_print(23, 34, 9);
+
+    //25-30
+    set_fungus_in_array_and_print(24, 44, 22);
+    set_fungus_in_array_and_print(25, 61, 29);
+    set_fungus_in_array_and_print(26, 62, 11);
+    set_fungus_in_array_and_print(27, 68, 19);
+    set_fungus_in_array_and_print(28, 69, 10);
+    set_fungus_in_array_and_print(29, 59, 14);
 
     //Restore color
     set_color(fgColor, bgColor);
