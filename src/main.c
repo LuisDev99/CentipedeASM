@@ -34,6 +34,8 @@ typedef struct CentipedesObjects
 
 void clearPosition(Object obj);
 void updateScore();
+void resetGlobalVariables();
+void welcomeScreen();
 
 void HandlePlayer();
 void HandleSpider();
@@ -73,25 +75,15 @@ uint8_t score, lifes;
 int main()
 {
 
-    player.x = 40;
-    player.y = 25;
-
-    bullet.x = bullet.y = 210; //Give a random location outside 80x60 so that it wont register any collision
-
-    spider.x = 1;
-    spider.y = 10;
-
-    score = 0;
-    lifes = 3;
-
     clear_screen();
     set_color(WHITE, BLACK);
 
     set_cursor(15, 40);
     keypad_init();
 
-    paintFungus();
-    initializeCentipede();
+    welcomeScreen();
+
+    resetGlobalVariables();
 
     while (1)
     {
@@ -688,7 +680,7 @@ void bulletCollisionDetector()
             uint8_t prevX = centipede_body[i].location.x;
             centipede_body[i].location.x = centipede_body[i].location.y = 199;
 
-            //Change the rest of the centipede's direction
+            //Change the rest of the centipedes' direction
             for (uint8_t j = i + 1; j < CENTIPEDE_BODY_SIZE; j++)
             {
                 clearPosition(centipede_body[j].location);
@@ -764,6 +756,58 @@ void updateScore()
     }
 
     set_color(fgColor, bgColor);
+}
+
+void resetGlobalVariables()
+{
+    player.x = 40;
+    player.y = 25;
+
+    bullet.x = bullet.y = 210; //Give a random location outside 80x60 so that it wont register any collision
+
+    spider.x = 1;
+    spider.y = 10;
+
+    score = 0;
+    lifes = 3;
+
+    paintFungus();
+    initializeCentipede();
+}
+
+void welcomeScreen()
+{
+    uint8_t k;
+    do
+    {
+        k = keypad_getkey();
+
+        for (uint8_t x = 0; x < MAX_COLS; x++)
+        {
+            for (uint8_t y = 0; y < MAX_ROWS; y++)
+            {
+                if ((x >= 20 && x <= 60 && (y == 10 || y == 25)) || ((y >= 10 && y <= 25 && (x == 20 || x == 60))))
+                {
+                    set_cursor(y, x);
+                    put_char(254);
+                }
+            }
+        }
+
+        set_cursor(15, 30);
+        puts("CENTIPEDE VIDEOGAME");
+
+        set_cursor(18, 30);
+        puts("Created by: LuisDev99");
+        set_cursor(19, 37);
+        puts("2019");
+
+        set_cursor(21, 27);
+        puts("press any key to start the game");
+
+    } while (k == 0);
+
+    clear_screen();
 }
 
 // uint8_t k = keypad_getkey();
