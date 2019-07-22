@@ -340,13 +340,13 @@ void HandleSpider()
     {
         if (spider.currentDirection == LEFT)
         {
-            if (spider.location.y == 1 || is_going_to_hit_a_fungus(spider.location.x - 1, spider.location.y - 1))
+            if (spider.location.y == 1 || is_going_to_hit_a_fungus(spider.location.x - 1, spider.location.y - 1) || is_going_to_hit_a_fungus(spider.location.x, spider.location.y - 1))
             {
                 spider.isComing = COMING_DOWN;
                 spider.location.y++;
                 spider.location.x--;
             }
-            else if (spider.location.x == 1 || is_going_to_hit_a_fungus(spider.location.x - 1, spider.location.y - 1))
+            else if (spider.location.x == 1 || is_going_to_hit_a_fungus(spider.location.x - 1, spider.location.y - 1) || is_going_to_hit_a_fungus(spider.location.x, spider.location.y - 1))
             {
                 spider.currentDirection = RIGHT;
                 spider.location.y--;
@@ -361,13 +361,13 @@ void HandleSpider()
 
         else if (spider.currentDirection == RIGHT)
         {
-            if (spider.location.y == 1 || is_going_to_hit_a_fungus(spider.location.x + 1, spider.location.y - 1))
+            if (spider.location.y == 1 || is_going_to_hit_a_fungus(spider.location.x + 1, spider.location.y - 1) || is_going_to_hit_a_fungus(spider.location.x + 2, spider.location.y - 1))
             {
                 spider.isComing = COMING_DOWN;
                 spider.location.y++;
                 spider.location.x++;
             }
-            else if (spider.location.x == (MAX_COLS - 1) || is_going_to_hit_a_fungus(spider.location.x + 1, spider.location.y - 1))
+            else if (spider.location.x == (MAX_COLS - 1) || is_going_to_hit_a_fungus(spider.location.x + 1, spider.location.y - 1) || is_going_to_hit_a_fungus(spider.location.x + 2, spider.location.y - 1))
             {
                 spider.currentDirection = LEFT;
                 spider.location.y--;
@@ -384,13 +384,13 @@ void HandleSpider()
     {
         if (spider.currentDirection == LEFT)
         {
-            if (spider.location.y == (MAX_ROWS - 1) || is_going_to_hit_a_fungus(spider.location.x - 1, spider.location.y + 1))
+            if (spider.location.y == (MAX_ROWS - 1) || is_going_to_hit_a_fungus(spider.location.x - 1, spider.location.y + 1) || is_going_to_hit_a_fungus(spider.location.x, spider.location.y + 1))
             {
                 spider.isComing = COMING_UP;
                 spider.location.y--;
                 spider.location.x--;
             }
-            else if (spider.location.x == 1 || is_going_to_hit_a_fungus(spider.location.x - 1, spider.location.y + 1))
+            else if (spider.location.x == 1 || is_going_to_hit_a_fungus(spider.location.x - 1, spider.location.y + 1) || is_going_to_hit_a_fungus(spider.location.x, spider.location.y + 1))
             {
                 spider.currentDirection = RIGHT;
                 spider.location.y++;
@@ -405,13 +405,13 @@ void HandleSpider()
 
         else if (spider.currentDirection == RIGHT)
         {
-            if (spider.location.y == (MAX_ROWS - 1) || is_going_to_hit_a_fungus(spider.location.x + 1, spider.location.y + 1))
+            if (spider.location.y == (MAX_ROWS - 1) || is_going_to_hit_a_fungus(spider.location.x + 1, spider.location.y + 1) || is_going_to_hit_a_fungus(spider.location.x + 2, spider.location.y + 1))
             {
                 spider.isComing = COMING_UP;
                 spider.location.y--;
                 spider.location.x++;
             }
-            else if (spider.location.x == (MAX_COLS - 1) || is_going_to_hit_a_fungus(spider.location.x + 1, spider.location.y + 1))
+            else if (spider.location.x == (MAX_COLS - 1) || is_going_to_hit_a_fungus(spider.location.x + 1, spider.location.y + 1) || is_going_to_hit_a_fungus(spider.location.x + 2, spider.location.y + 1))
             {
                 spider.currentDirection = LEFT;
                 spider.location.y++;
