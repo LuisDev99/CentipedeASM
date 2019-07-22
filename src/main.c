@@ -83,7 +83,7 @@ SpiderObj spider;
 
 Object player, bullet;
 
-uint8_t score, lifes;
+uint8_t score, lifes, centipedes_remaining;
 
 int main()
 {
@@ -544,8 +544,8 @@ void paintSpider(Object spider)
 
     set_cursor(spider.y, spider.x);
 
-    put_char(5);
-    put_char(6);
+    put_char(37);
+    put_char(38);
 
     set_color(fgColor, bgColor);
 }
@@ -690,13 +690,15 @@ void initializeCentipede()
         //Place each centipede location according to its index soo that in the beginning, the whole centipede spawns
         //in the top right end of the screen
         centipede_body[i].location.x = ((MAX_ROWS - 1) - CENTIPEDE_BODY_SIZE) + i;
-        centipede_body[i].location.y = 0;
+        centipede_body[i].location.y = 1;
 
         centipede_body[i].currentDirection = LEFT;
-        centipede_body[i].previousDirection = LEFT;
+        centipede_body[i].previousDirection = RIGHT;
         centipede_body[i].isComing = COMING_DOWN;
         centipede_body[i].isDead = false;
     }
+
+    centipedes_remaining = 8;
 }
 
 bool is_going_to_hit_a_fungus(uint8_t objX, uint8_t objY)
@@ -778,9 +780,11 @@ void bulletCollisionDetector()
         if (centipede_body[i].isDead)
             continue;
 
+        //If the centipede got hit, enter the if
         if (bullet.x == centipede_body[i].location.x && bullet.y == centipede_body[i].location.y)
         {
             score++;
+            centipedes_remaining--;
 
             //Kill Centipede
             clearPosition(centipede_body[i].location);
@@ -862,6 +866,11 @@ void updateScore()
 
     set_color(RED, BLACK);
 
+    if (centipedes_remaining == 0)
+    {
+        initializeCentipede();
+    }
+
     if (lifes == 3)
     {
         put_char(17);
@@ -904,6 +913,7 @@ void resetGlobalVariables()
 
     score = 0;
     lifes = 3;
+    centipedes_remaining = 8;
 
     paintFungus();
     initializeCentipede();
@@ -990,7 +1000,7 @@ void registerPlayerDeath()
             puts("press any key to continue");
         }
 
-    } while (k == 0);
+    } while (k == 0 || lifes == 0);
 
     player.x = 40;
     player.y = 29;
