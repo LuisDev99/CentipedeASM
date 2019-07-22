@@ -32,6 +32,14 @@ typedef struct CentipedesObjects
 
 } CentipedeObj;
 
+typedef struct SpiderObjects
+{
+    Object location;
+
+    enum Directions currentDirection, previousDirection, isComing;
+
+} SpiderObj;
+
 void clearPosition(Object obj);
 void updateScore();
 void resetGlobalVariables();
@@ -67,8 +75,9 @@ bool spiderDoneMovingRight = false;
 
 Object fungus[AMOUNT_OF_FUNGUS];
 CentipedeObj centipede_body[CENTIPEDE_BODY_SIZE];
+SpiderObj spider;
 
-Object player, spider, bullet;
+Object player, bullet;
 
 uint8_t score, lifes;
 
@@ -131,7 +140,7 @@ int main()
         }
 
         paintPlayer(player);
-        paintSpider(spider);
+        paintSpider(spider.location);
     }
 
     return 0;
@@ -320,19 +329,103 @@ void HandleCentipede()
 
 void HandleSpider()
 {
-    if (spider.y == 0)
-        spiderDoneMovingUp = true;
+    //Spider takes two columns, soo clear both of them
+    clearPosition(spider.location);
+    spider.location.x++;
+    clearPosition(spider.location);
+    spider.location.x--;
 
-    if (spiderDoneMovingUp)
+    // //Implement the same logic as the one in handle centipede
+    if (spider.isComing == COMING_UP)
     {
-        spider.x++;
-        spiderDoneMovingRight = true;
-        spiderDoneMovingDown = false;
+        if (spider.currentDirection == LEFT)
+        {
+            if (spider.location.y == 1 || is_going_to_hit_a_fungus(spider.location.x - 1, spider.location.y - 1))
+            {
+                spider.isComing = COMING_DOWN;
+                spider.location.y++;
+                spider.location.x--;
+            }
+            else if (spider.location.x == 1 || is_going_to_hit_a_fungus(spider.location.x - 1, spider.location.y - 1))
+            {
+                spider.currentDirection = RIGHT;
+                spider.location.y--;
+                spider.location.x++;
+            }
+            else
+            {
+                spider.location.y--;
+                spider.location.x--;
+            }
+        }
+
+        else if (spider.currentDirection == RIGHT)
+        {
+            if (spider.location.y == 1 || is_going_to_hit_a_fungus(spider.location.x + 1, spider.location.y - 1))
+            {
+                spider.isComing = COMING_DOWN;
+                spider.location.y++;
+                spider.location.x++;
+            }
+            else if (spider.location.x == (MAX_COLS - 1) || is_going_to_hit_a_fungus(spider.location.x + 1, spider.location.y - 1))
+            {
+                spider.currentDirection = LEFT;
+                spider.location.y--;
+                spider.location.x--;
+            }
+            else
+            {
+                spider.location.x++;
+                spider.location.y--;
+            }
+        }
+    }
+    else if (spider.isComing == COMING_DOWN)
+    {
+        if (spider.currentDirection == LEFT)
+        {
+            if (spider.location.y == (MAX_ROWS - 1) || is_going_to_hit_a_fungus(spider.location.x - 1, spider.location.y + 1))
+            {
+                spider.isComing = COMING_UP;
+                spider.location.y--;
+                spider.location.x--;
+            }
+            else if (spider.location.x == 1 || is_going_to_hit_a_fungus(spider.location.x - 1, spider.location.y + 1))
+            {
+                spider.currentDirection = RIGHT;
+                spider.location.y++;
+                spider.location.x++;
+            }
+            else
+            {
+                spider.location.x--;
+                spider.location.y++;
+            }
+        }
+
+        else if (spider.currentDirection == RIGHT)
+        {
+            if (spider.location.y == (MAX_ROWS - 1) || is_going_to_hit_a_fungus(spider.location.x + 1, spider.location.y + 1))
+            {
+                spider.isComing = COMING_UP;
+                spider.location.y--;
+                spider.location.x++;
+            }
+            else if (spider.location.x == (MAX_COLS - 1) || is_going_to_hit_a_fungus(spider.location.x + 1, spider.location.y + 1))
+            {
+                spider.currentDirection = LEFT;
+                spider.location.y++;
+                spider.location.x--;
+            }
+            else
+            {
+                spider.location.y++;
+                spider.location.x++;
+            }
+        }
     }
 
-    if (spiderDoneMovingDown)
-    {
-    }
+    //spider.x = spider.y = *MS_COUNTER_REG_ADDR & 0x00000004 + player.x;
 }
 
 void HandlePlayer()
@@ -637,25 +730,25 @@ void bulletCollisionDetector()
     /* CHECKING COLLISION ON SPIDER SECTION */
 
     //The spider takes two column spaces, soo check both of them to detect collision
-    if ((bullet.x == spider.x || bullet.x == spider.x + 1) && bullet.y == spider.y)
+    if ((bullet.x == spider.location.x || bullet.x == spider.location.x + 1) && bullet.y == spider.location.y)
     {
 
         //spider takes two column spaces long, so clear those two spaces
-        clearPosition(spider);
-        spider.x++;
-        clearPosition(spider);
+        clearPosition(spider.location);
+        spider.location.x++;
+        clearPosition(spider.location);
 
         score++;
 
         //Pick a new random location for spider by using the register counter random current value
-        spider.x = (*MS_COUNTER_REG_ADDR | 255);
+        spider.location.x = (*MS_COUNTER_REG_ADDR | 255);
 
         //If the random value was greater than the screen size, then give it a hardcoded x location to prevent a bug
-        if (spider.x >= MAX_COLS)
-            spider.x = 40;
+        if (spider.location.x >= MAX_COLS)
+            spider.location.x = 40;
 
         set_cursor(1, 78);
-        put_char(TO_STR(spider.x));
+        put_char(TO_STR(spider.location.x));
 
         //Clean the bullet
         clearPosition(bullet);
@@ -737,8 +830,10 @@ void updateScore()
     {
         put_char(17);
         put_char(18);
+        puts(" ");
         put_char(17);
         put_char(18);
+        puts(" ");
         put_char(17);
         put_char(18);
     }
@@ -746,6 +841,7 @@ void updateScore()
     {
         put_char(17);
         put_char(18);
+        puts(" ");
         put_char(17);
         put_char(18);
     }
@@ -765,8 +861,10 @@ void resetGlobalVariables()
 
     bullet.x = bullet.y = 210; //Give a random location outside 80x60 so that it wont register any collision
 
-    spider.x = 1;
-    spider.y = 10;
+    spider.location.x = 1;
+    spider.location.y = 10;
+    spider.isComing = COMING_DOWN;
+    spider.currentDirection = RIGHT;
 
     score = 0;
     lifes = 3;
