@@ -45,6 +45,8 @@ void updateScore();
 void resetGlobalVariables();
 void welcomeScreen();
 
+void registerPlayerDeath();
+
 void HandlePlayer();
 void HandleSpider();
 void HandleBullet(uint8_t objYPos, uint8_t objXPos);
@@ -61,6 +63,7 @@ void set_fungus_in_array_and_print(uint8_t index, uint8_t x, uint8_t y);
 void initializeCentipede();
 
 void bulletCollisionDetector();
+void playerCollisionDetector();
 
 bool is_going_to_hit_a_fungus(uint8_t objX, uint8_t objY);
 
@@ -141,6 +144,8 @@ int main()
 
         paintPlayer(player);
         paintSpider(spider.location);
+
+        playerCollisionDetector();
     }
 
     return 0;
@@ -806,6 +811,27 @@ void bulletCollisionDetector()
     //
 }
 
+void playerCollisionDetector()
+{
+    if ((player.x == spider.location.x || player.x == spider.location.x + 1) && player.y == spider.location.y)
+    {
+        registerPlayerDeath();
+        return;
+    }
+
+    for (uint8_t i = 0; i < CENTIPEDE_BODY_SIZE; i++)
+    {
+        if (centipede_body[i].isDead)
+            continue;
+
+        if (player.x == centipede_body[i].location.x && player.y == centipede_body[i].location.y)
+        {
+            registerPlayerDeath();
+            return;
+        }
+    }
+}
+
 void clearPosition(Object obj)
 {
     /* Takes in any object and will write a null character in its location */
@@ -906,6 +932,60 @@ void welcomeScreen()
     } while (k == 0);
 
     clear_screen();
+}
+
+void registerPlayerDeath()
+{
+    clear_screen();
+    lifes--;
+
+    uint8_t k;
+    do
+    {
+        k = keypad_getkey();
+
+        for (uint8_t x = 0; x < MAX_COLS; x++)
+        {
+            for (uint8_t y = 0; y < MAX_ROWS; y++)
+            {
+                if ((x >= 20 && x <= 60 && (y == 10 || y == 25)) || ((y >= 10 && y <= 25 && (x == 20 || x == 60))))
+                {
+                    set_cursor(y, x);
+                    put_char(254);
+                }
+            }
+        }
+
+        if (lifes == 0)
+        {
+            set_cursor(15, 30);
+            puts("Game Over");
+
+            set_cursor(21, 27);
+            puts("press space bar to reset");
+
+            if (k == 8)
+            {
+                resetGlobalVariables();
+                break;
+            }
+        }
+        else
+        {
+
+            set_cursor(15, 30);
+            puts("YOU DIED!");
+
+            set_cursor(21, 27);
+            puts("press any key to continue");
+        }
+
+    } while (k == 0);
+
+    player.x = 40;
+    player.y = 29;
+    clear_screen();
+    paintFungus();
 }
 
 // uint8_t k = keypad_getkey();
