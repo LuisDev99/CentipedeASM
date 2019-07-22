@@ -33,6 +33,7 @@ typedef struct CentipedesObjects
 } CentipedeObj;
 
 void clearPosition(Object obj);
+void updateScore();
 
 void HandlePlayer();
 void HandleSpider();
@@ -67,7 +68,7 @@ CentipedeObj centipede_body[CENTIPEDE_BODY_SIZE];
 
 Object player, spider, bullet;
 
-uint8_t score;
+uint8_t score, lifes;
 
 int main()
 {
@@ -81,6 +82,7 @@ int main()
     spider.y = 10;
 
     score = 0;
+    lifes = 3;
 
     clear_screen();
     set_color(WHITE, BLACK);
@@ -94,6 +96,8 @@ int main()
     while (1)
     {
         delay_ms(50); //Regulates game movement
+
+        updateScore();
 
         //Draw the score in the top left corner of the screen
         set_cursor(0, 78);
@@ -688,10 +692,24 @@ void bulletCollisionDetector()
             for (uint8_t j = i + 1; j < CENTIPEDE_BODY_SIZE; j++)
             {
                 clearPosition(centipede_body[j].location);
+
                 centipede_body[j].location.y = centipede_body[j].location.y + 1;
-                centipede_body[j].location.x = prevX + j;
+
+                if (centipede_body[j].currentDirection == LEFT)
+                {
+                    centipede_body[j].location.x = (prevX + CENTIPEDE_BODY_SIZE) - j;
+                }
+                else
+                {
+                    centipede_body[j].location.x = (prevX + CENTIPEDE_BODY_SIZE) + j;
+                }
+
                 centipede_body[j].previousDirection = centipede_body[j].currentDirection;
-                centipede_body[j].currentDirection = DOWN;
+
+                if (centipede_body[j].isComing == COMING_DOWN)
+                    centipede_body[j].currentDirection = DOWN;
+                else
+                    centipede_body[j].currentDirection = UP;
             }
 
             //Clean the bullet
@@ -710,6 +728,42 @@ void clearPosition(Object obj)
     //Clear last x and y
     set_cursor(obj.y, obj.x);
     put_char(255); //Write to that position an empty char
+}
+
+void updateScore()
+{
+    uint8_t fgColor, bgColor;
+    get_color(&fgColor, &bgColor);
+
+    set_cursor(0, 60);
+
+    puts("Lifes: ");
+
+    set_color(RED, BLACK);
+
+    if (lifes == 3)
+    {
+        put_char(17);
+        put_char(18);
+        put_char(17);
+        put_char(18);
+        put_char(17);
+        put_char(18);
+    }
+    else if (lifes == 2)
+    {
+        put_char(17);
+        put_char(18);
+        put_char(17);
+        put_char(18);
+    }
+    else
+    {
+        put_char(17);
+        put_char(18);
+    }
+
+    set_color(fgColor, bgColor);
 }
 
 // uint8_t k = keypad_getkey();
