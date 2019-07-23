@@ -91,7 +91,6 @@ uint8_t score, lifes, centipedes_remaining;
 
 int main()
 {
-
     clear_screen();
     set_color(WHITE, BLACK);
 
@@ -102,8 +101,16 @@ int main()
 
     resetGlobalVariables();
 
+    unsigned int prevTimeMs = *MS_COUNTER_REG_ADDR;
+
     while (1)
     {
+        if ((*MS_COUNTER_REG_ADDR - prevTimeMs) > 120000)
+        {
+            set_cursor(0, 40);
+            puts("Excellent game!");
+        }
+
         delay_ms(20); //Regulates game movement
 
         updateScore();
@@ -775,6 +782,9 @@ void bullet_and_spider_collision_detector()
 {
     if ((bullet.x == spider.location.x || bullet.x == spider.location.x + 1) && bullet.y == spider.location.y)
     {
+        //Print a little message on top of the screen
+        set_cursor(0, 4);
+        puts("Spider got hit! Good job");
 
         //spider takes two column spaces long, so clear those two spaces
         clearPosition(spider.location);
