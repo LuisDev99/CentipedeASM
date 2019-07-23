@@ -4,7 +4,7 @@
 #define TO_STR(ch) ((((ch) >= 0) && ((ch) <= 9)) ? (48 + (ch)) : ('a' + ((ch)-10)))
 
 #define AMOUNT_OF_FUNGUS 30
-#define CENTIPEDE_BODY_SIZE 8
+#define CENTIPEDE_BODY_SIZE 14
 
 enum Directions
 {
@@ -100,7 +100,7 @@ int main()
 
     while (1)
     {
-        delay_ms(50); //Regulates game movement
+        delay_ms(20); //Regulates game movement
 
         updateScore();
 
@@ -698,7 +698,7 @@ void initializeCentipede()
         centipede_body[i].isDead = false;
     }
 
-    centipedes_remaining = 8;
+    centipedes_remaining = CENTIPEDE_BODY_SIZE;
 }
 
 bool is_going_to_hit_a_fungus(uint8_t objX, uint8_t objY)
@@ -755,7 +755,16 @@ void bulletCollisionDetector()
         spider.location.x++;
         clearPosition(spider.location);
 
-        score++;
+        uint8_t score_over_distance_kill = 0;
+
+        if (player.y - spider.location.y >= 9)
+            score_over_distance_kill = 8;
+        else if (player.y - spider.location.y >= 6)
+            score_over_distance_kill = 6;
+        else
+            score_over_distance_kill = 4;
+
+        score += score_over_distance_kill;
 
         //Pick a new random location for spider by using the register counter random current value
         spider.location.x = (*MS_COUNTER_REG_ADDR | 255);
@@ -764,11 +773,13 @@ void bulletCollisionDetector()
         if (spider.location.x >= MAX_COLS)
             spider.location.x = 40;
 
-        set_cursor(1, 78);
-        put_char(TO_STR(spider.location.x));
-
         //Clean the bullet
         clearPosition(bullet);
+
+        //Print Score thing
+        set_cursor(bullet.y, bullet.x);
+        put_char(TO_STR(score_over_distance_kill));
+
         bullet.x = bullet.y = 209; //Out of bound location soo that it wont register with anything else
         shouldBulletBePainted = false;
     }
@@ -913,7 +924,7 @@ void resetGlobalVariables()
 
     score = 0;
     lifes = 3;
-    centipedes_remaining = 8;
+    centipedes_remaining = CENTIPEDE_BODY_SIZE;
 
     paintFungus();
     initializeCentipede();
