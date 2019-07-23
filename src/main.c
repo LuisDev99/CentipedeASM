@@ -64,6 +64,10 @@ void set_fungus_in_array_and_print(uint8_t index, uint8_t x, uint8_t y);
 void initializeCentipede();
 
 void bulletCollisionDetector();
+void bullet_and_fungus_collision_detector();
+void bullet_and_spider_collision_detector();
+void bullet_and_centipede_collision_detector();
+
 void playerCollisionDetector();
 
 bool is_going_to_hit_a_fungus(uint8_t objX, uint8_t objY);
@@ -730,6 +734,19 @@ void bulletCollisionDetector()
 {
     /* CHECKING COLLISION ON FUNGUS SECTION */
 
+    bullet_and_fungus_collision_detector();
+
+    /* CHECKING COLLISION ON SPIDER SECTION */
+
+    bullet_and_spider_collision_detector();
+
+    /* CHECKING COLLISION ON CENTIPEDE SECTION */
+
+    bullet_and_centipede_collision_detector();
+}
+
+void bullet_and_fungus_collision_detector()
+{
     //Detect if the bullet collided with fongus
     for (uint8_t i = 0; i < AMOUNT_OF_FUNGUS; i++)
     {
@@ -753,10 +770,9 @@ void bulletCollisionDetector()
             return;
         }
     }
-
-    /* CHECKING COLLISION ON SPIDER SECTION */
-
-    //The spider takes two column spaces, soo check both of them to detect collision
+}
+void bullet_and_spider_collision_detector()
+{
     if ((bullet.x == spider.location.x || bullet.x == spider.location.x + 1) && bullet.y == spider.location.y)
     {
 
@@ -793,9 +809,9 @@ void bulletCollisionDetector()
         bullet.x = bullet.y = 209; //Out of bound location soo that it wont register with anything else
         shouldBulletBePainted = false;
     }
-
-    /* CHECKING COLLISION ON CENTIPEDE SECTION */
-
+}
+void bullet_and_centipede_collision_detector()
+{
     for (uint8_t i = 0; i < CENTIPEDE_BODY_SIZE; i++)
     {
         if (centipede_body[i].isDead)
@@ -843,7 +859,6 @@ void bulletCollisionDetector()
             shouldBulletBePainted = false;
         }
     }
-    //
 }
 
 void playerCollisionDetector()
@@ -887,6 +902,7 @@ void updateScore()
 
     set_color(RED, BLACK);
 
+    //If the player killed all centipedes, respawn all of them by calling initalizeCentipede
     if (centipedes_remaining == 0)
     {
         initializeCentipede();
@@ -999,10 +1015,10 @@ void registerPlayerDeath()
 
         if (lifes == 0)
         {
-            set_cursor(15, 30);
+            set_cursor(15, 35);
             puts("Game Over");
 
-            set_cursor(21, 27);
+            set_cursor(19, 29);
             puts("press space bar to reset");
 
             if (k == 8)
@@ -1014,10 +1030,10 @@ void registerPlayerDeath()
         else
         {
 
-            set_cursor(15, 30);
+            set_cursor(15, 35);
             puts("YOU DIED!");
 
-            set_cursor(21, 27);
+            set_cursor(19, 29);
             puts("press any key to continue");
         }
 
