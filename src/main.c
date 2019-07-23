@@ -423,8 +423,18 @@ void HandleSpider()
             }
             else
             {
-                spider.location.y++;
-                spider.location.x++;
+                if (spider.location.y + 1 != (MAX_ROWS) && spider.location.x + 1 != (MAX_COLS))
+                {
+                    spider.location.y++;
+                    spider.location.x++;
+                }
+                else
+                {
+                    spider.isComing = COMING_UP;
+                    spider.currentDirection = LEFT;
+                    spider.location.y--;
+                    spider.location.x--;
+                }
             }
         }
     }
