@@ -463,6 +463,15 @@ void HandlePlayer()
 
     uint8_t k = keypad_getkey();
 
+    uint8_t butttons_state = *BTN_STATE_REG_ADDR;
+
+    //Check if some movements keys are being pressed and also the space key
+    uint8_t bit = (butttons_state >> 7) & 1;
+
+    set_cursor(0, 0);
+    put_char(TO_STR(butttons_state));
+    put_char(TO_STR(bit));
+
     if (k != 0)
     {
 
@@ -482,6 +491,12 @@ void HandlePlayer()
                 }
             }
 
+            if (bit) //If the left key and the space bar was also pressed, then draw bullet
+            {
+                bulletWasPressed = true;
+                shouldBulletBePainted = true;
+            }
+
             break;
 
         case 2: //Right
@@ -493,6 +508,12 @@ void HandlePlayer()
                     clearPosition(player);
                     player.x++;
                 }
+            }
+
+            if (bit) //If the Right key and the space bar was also pressed, then draw bullet
+            {
+                bulletWasPressed = true;
+                shouldBulletBePainted = true;
             }
 
             break;
@@ -507,6 +528,13 @@ void HandlePlayer()
                     player.y++;
                 }
             }
+
+            if (bit) //If the Down key and the space bar was also pressed, then draw bullet
+            {
+                bulletWasPressed = true;
+                shouldBulletBePainted = true;
+            }
+
             break;
 
         case 4: //Up
@@ -518,6 +546,13 @@ void HandlePlayer()
                     player.y--;
                 }
             }
+
+            if (bit) //If the Up key and the space bar was also pressed, then draw bullet
+            {
+                bulletWasPressed = true;
+                shouldBulletBePainted = true;
+            }
+
             break;
 
         case 8: //Space para disparar
@@ -606,7 +641,7 @@ void paintFungus()
     set_fungus_in_array_and_print(14, 56, 7);
     set_fungus_in_array_and_print(15, 30, 23);
     set_fungus_in_array_and_print(16, 19, 27);
-    set_fungus_in_array_and_print(17, 78, 5);
+    set_fungus_in_array_and_print(17, 75, 5);
     set_fungus_in_array_and_print(18, 47, 21);
     set_fungus_in_array_and_print(19, 67, 15);
     set_fungus_in_array_and_print(20, 31, 18);
@@ -619,8 +654,8 @@ void paintFungus()
     set_fungus_in_array_and_print(25, 61, 29);
     set_fungus_in_array_and_print(26, 62, 11);
     set_fungus_in_array_and_print(27, 68, 19);
-    set_fungus_in_array_and_print(28, 69, 10);
-    set_fungus_in_array_and_print(29, 59, 14);
+    set_fungus_in_array_and_print(28, 79, 28);
+    set_fungus_in_array_and_print(29, 79, 29);
 
     //Restore color
     set_color(fgColor, bgColor);
@@ -812,7 +847,7 @@ void bullet_and_spider_collision_detector()
         //Clean the bullet
         clearPosition(bullet);
 
-        //Print Score thing
+        //Print Score thing in the spider death location
         set_cursor(bullet.y, bullet.x);
         put_char(TO_STR(score_over_distance_kill));
 
@@ -844,7 +879,11 @@ void bullet_and_centipede_collision_detector()
             {
                 clearPosition(centipede_body[j].location);
 
-                centipede_body[j].location.y = centipede_body[j].location.y + 1;
+                //If the centipede is killed in the bottom, it will try to move out of the screen, soo prevent that
+                if (centipede_body[j].location.y + 1 >= (MAX_ROWS - 1))
+                    centipede_body[j].location.y = centipede_body[j].location.y - 1;
+                else
+                    centipede_body[j].location.y = centipede_body[j].location.y + 1;
 
                 if (centipede_body[j].currentDirection == LEFT)
                 {
@@ -908,7 +947,7 @@ void updateScore()
 
     set_cursor(0, 60);
 
-    puts("Lifes: ");
+    puts("Lives: ");
 
     set_color(RED, BLACK);
 
