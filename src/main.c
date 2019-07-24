@@ -3,7 +3,7 @@
 
 #define TO_STR(ch) ((((ch) >= 0) && ((ch) <= 9)) ? (48 + (ch)) : ('a' + ((ch)-10)))
 
-#define AMOUNT_OF_FUNGUS 30
+#define AMOUNT_OF_FUNGUS 31
 #define CENTIPEDE_BODY_SIZE 14
 
 enum Directions
@@ -105,19 +105,16 @@ int main()
 
     while (1)
     {
+        //Print a message if the player passed the 2 minutes mark
         if ((*MS_COUNTER_REG_ADDR - prevTimeMs) > 120000)
         {
-            set_cursor(0, 40);
-            puts("Excellent game!");
+            set_cursor(0, 43);
+            puts("EXCELLENT!");
         }
 
         delay_ms(20); //Regulates game movement
 
         updateScore();
-
-        //Draw the score in the top left corner of the screen
-        set_cursor(0, 78);
-        put_char(TO_STR(score));
 
         bulletCollisionDetector(); //Detect collision in here or at the end of the loop?
 
@@ -657,6 +654,10 @@ void paintFungus()
     set_fungus_in_array_and_print(28, 79, 28);
     set_fungus_in_array_and_print(29, 79, 29);
 
+    //If a fungus was spawn by the head of a centipede, then redraw this fungus, if not, dont paint this fungus
+    if (fungus[30].x != 0 && fungus[30].x != 199 && fungus[30].x != 250)
+        set_fungus_in_array_and_print(30, fungus[30].x, fungus[30].y);
+
     //Restore color
     set_color(fgColor, bgColor);
 }
@@ -872,6 +873,7 @@ void bullet_and_centipede_collision_detector()
             clearPosition(centipede_body[i].location);
             centipede_body[i].isDead = true;
             uint8_t prevX = centipede_body[i].location.x;
+            uint8_t prevY = centipede_body[i].location.y;
             centipede_body[i].location.x = centipede_body[i].location.y = 199;
 
             //Change the rest of the centipedes' direction
@@ -906,6 +908,14 @@ void bullet_and_centipede_collision_detector()
             clearPosition(bullet);
             bullet.x = bullet.y = 208; //Out of bound location soo that it wont register with anything else
             shouldBulletBePainted = false;
+
+            //If the head of the centipede was hit, the head now becomes a fungus
+            if (centipede_body[i].isHead)
+            {
+                set_cursor(0, 30);
+                puts("Head Killed!");
+                set_fungus_in_array_and_print(30, prevX, prevY);
+            }
         }
     }
 }
@@ -945,7 +955,12 @@ void updateScore()
     uint8_t fgColor, bgColor;
     get_color(&fgColor, &bgColor);
 
-    set_cursor(0, 60);
+    //Draw the score in the top left corner of the screen
+    set_cursor(0, 71);
+    puts("Score:");
+    put_char(TO_STR(score));
+
+    set_cursor(0, 55);
 
     puts("Lives: ");
 
