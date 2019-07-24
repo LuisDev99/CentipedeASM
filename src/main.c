@@ -567,7 +567,7 @@ void paintPlayer(Object player)
     get_color(&fgColor, &bgColor);
 
     set_cursor(player.y, player.x);
-    set_color(GREEN, BLACK);
+    set_color(WHITE, BLACK);
 
     put_char(14);
 
@@ -1031,7 +1031,7 @@ void welcomeScreen()
         {
             for (uint8_t y = 0; y < MAX_ROWS; y++)
             {
-                if ((x >= 20 && x <= 60 && (y == 10 || y == 25)) || ((y >= 10 && y <= 25 && (x == 20 || x == 60))))
+                if ((x >= 5 && x <= 75 && (y == 5 || y == 25)) || ((y >= 5 && y <= 25 && (x == 5 || x == 75))))
                 {
                     set_cursor(y, x);
                     put_char(254);
@@ -1039,16 +1039,46 @@ void welcomeScreen()
             }
         }
 
-        set_cursor(15, 30);
-        puts("CENTIPEDE VIDEOGAME");
+        set_cursor(6, 26);
+        puts("CENTIPEDE ARCADE VIDEOGAME");
 
-        set_cursor(18, 30);
+        uint8_t fgColor, bgColor;
+        get_color(&fgColor, &bgColor);
+
+        set_color(BLUE, BLACK);
+
+        //Print out the description
+        set_cursor(8, 30);
+        puts("Game description");
+
+        set_cursor(10, 7);
+        puts("You are the white spacheship. You can move up, right, left and down");
+        set_cursor(11, 7);
+        puts("The buttons are: Up key, Down, left, right and space spar to shoot!");
+        set_cursor(12, 7);
+        puts("You can move and shoot simultaneously! You only have one bullet");
+        set_cursor(13, 7);
+        puts("You must kill the centipede to gain points");
+        set_cursor(14, 7);
+        puts("You can kill the moving spider, the longer the kill = more points");
+        set_cursor(15, 7);
+        puts("If you hit the centipede, it will split in two accordingly");
+        set_cursor(16, 7);
+        puts("If you kill the head of the centipede, a fungus will spawn");
+        set_cursor(17, 7);
+        puts("Fungus appear accross the map, it blocks your movement, you can -");
+        set_cursor(18, 7);
+        puts("destroy them to free space! Enjoy!!");
+
+        set_color(fgColor, bgColor);
+
+        set_cursor(21, 30);
         puts("Created by: LuisDev99");
-        set_cursor(19, 37);
+        set_cursor(22, 37);
         puts("2019");
 
-        set_cursor(21, 27);
-        puts("press any key to start the game");
+        set_cursor(24, 27);
+        puts("PRESS ANY KEY TO START THE GAME");
 
     } while (k == 0);
 
