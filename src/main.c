@@ -6,41 +6,6 @@
 #define AMOUNT_OF_FUNGUS 31
 #define CENTIPEDE_BODY_SIZE 14
 
-enum Directions
-{
-    UP = 0,
-    DOWN = 1,
-    LEFT = 2,
-    RIGHT = 3,
-    COMING_UP = 4,
-    COMING_DOWN = 5
-};
-
-typedef struct Objects
-{
-    uint8_t x;
-    uint8_t y;
-
-} Object;
-
-typedef struct CentipedesObjects
-{
-    Object location;
-    bool isDead;
-    bool isHead;
-
-    enum Directions currentDirection, previousDirection, isComing;
-
-} CentipedeObj;
-
-typedef struct SpiderObjects
-{
-    Object location;
-
-    enum Directions currentDirection, previousDirection, isComing;
-
-} SpiderObj;
-
 void clearPosition(Object obj);
 void updateScore();
 void resetGlobalVariables();
@@ -58,28 +23,23 @@ void paintFungus();
 void paintPlayer(Object player);
 void paintBullet(Object bullet);
 void paintSpider(Object spider);
-void paintCentipede(CentipedeObj centipede);
-
+//void paintCentipede(CentipedeObj *centipede); //Assembled this
 void set_fungus_in_array_and_print(uint8_t index, uint8_t x, uint8_t y);
 void initializeCentipede();
 
 void bulletCollisionDetector();
-void bullet_and_fungus_collision_detector();
+void bullet_and_fungus_collision_detector(); //Assembled this
 void bullet_and_spider_collision_detector();
 void bullet_and_centipede_collision_detector();
 
-void playerCollisionDetector();
+void playerCollisionDetector(); //Assembled this
 
 bool is_going_to_hit_a_fungus(uint8_t objX, uint8_t objY);
 
+uint8_t fgColor, bgColor;
+
 bool bulletWasPressed = false;
 bool shouldBulletBePainted = false;
-
-//Spider movement control
-bool spiderDoneMovingUp = false;
-bool spiderDoneMovingDown = false;
-bool spiderDoneMovingLeft = false;
-bool spiderDoneMovingRight = false;
 
 Object fungus[AMOUNT_OF_FUNGUS];
 CentipedeObj centipede_body[CENTIPEDE_BODY_SIZE];
@@ -335,7 +295,7 @@ void HandleCentipede()
             }
         }
 
-        paintCentipede(centipede_body[i]);
+        paintCentipede(&centipede_body[i]);
     }
 }
 
@@ -563,7 +523,6 @@ void HandlePlayer()
 void paintPlayer(Object player)
 {
     //Grab last color to restore it after painting the player's ship color
-    uint8_t fgColor, bgColor;
     get_color(&fgColor, &bgColor);
 
     set_cursor(player.y, player.x);
@@ -576,7 +535,6 @@ void paintPlayer(Object player)
 
 void paintBullet(Object bullet)
 {
-    uint8_t fgColor, bgColor;
     get_color(&fgColor, &bgColor);
 
     set_cursor(bullet.y, bullet.x);
@@ -590,7 +548,6 @@ void paintBullet(Object bullet)
 void paintSpider(Object spider)
 {
 
-    uint8_t fgColor, bgColor;
     get_color(&fgColor, &bgColor);
 
     set_color(BROWN, BLACK);
@@ -607,7 +564,6 @@ void paintFungus()
 {
     /* Paint random fungus accross all screen */
 
-    uint8_t fgColor, bgColor;
     get_color(&fgColor, &bgColor);
 
     set_color(LIGHT_MAGENTA, BLACK);
@@ -662,21 +618,21 @@ void paintFungus()
     set_color(fgColor, bgColor);
 }
 
-void paintCentipede(CentipedeObj centipede)
+/* void paintCentipede(CentipedeObj *centipede)
 {
-    if (centipede.isDead)
+    if (centipede->isDead)
         return;
 
-    set_cursor(centipede.location.y, centipede.location.x);
+    set_cursor(centipede->location.y, centipede->location.x);
+    uint_8t x, y;
 
-    uint8_t fgColor, bgColor;
     get_color(&fgColor, &bgColor);
 
     set_color(LIGHT_GREEN, BLACK);
 
-    if (centipede.currentDirection == UP)
+    if (centipede->currentDirection == UP)
     {
-        if (centipede.isHead)
+        if (centipede->isHead)
         {
             put_char(12);
         }
@@ -685,9 +641,9 @@ void paintCentipede(CentipedeObj centipede)
             put_char(11);
         }
     }
-    else if (centipede.currentDirection == DOWN)
+    else if (centipede->currentDirection == DOWN)
     {
-        if (centipede.isHead)
+        if (centipede->isHead)
         {
             put_char(8);
         }
@@ -696,9 +652,9 @@ void paintCentipede(CentipedeObj centipede)
             put_char(7);
         }
     }
-    else if (centipede.currentDirection == LEFT)
+    else if (centipede->currentDirection == LEFT)
     {
-        if (centipede.isHead)
+        if (centipede->isHead)
         {
             put_char(2);
         }
@@ -707,9 +663,9 @@ void paintCentipede(CentipedeObj centipede)
             put_char(1);
         }
     }
-    else if (centipede.currentDirection == RIGHT)
+    else if (centipede->currentDirection == RIGHT)
     {
-        if (centipede.isHead)
+        if (centipede->isHead)
         {
             put_char(22);
         }
@@ -721,7 +677,7 @@ void paintCentipede(CentipedeObj centipede)
 
     //Restore color
     set_color(fgColor, bgColor);
-}
+} */
 
 void set_fungus_in_array_and_print(uint8_t index, uint8_t x, uint8_t y)
 {
@@ -952,7 +908,6 @@ void clearPosition(Object obj)
 
 void updateScore()
 {
-    uint8_t fgColor, bgColor;
     get_color(&fgColor, &bgColor);
 
     //Draw the score in the top left corner of the screen
@@ -1042,7 +997,6 @@ void welcomeScreen()
         set_cursor(6, 26);
         puts("CENTIPEDE ARCADE VIDEOGAME");
 
-        uint8_t fgColor, bgColor;
         get_color(&fgColor, &bgColor);
 
         set_color(BLUE, BLACK);
