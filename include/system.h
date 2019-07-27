@@ -33,7 +33,7 @@ enum Directions
 
 typedef struct Objects
 {
-    //size = 16
+    //size = 2 bytez
     uint8_t x; // 0 - 7
     uint8_t y; // 8 - 15
 

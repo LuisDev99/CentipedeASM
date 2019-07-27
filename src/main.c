@@ -6,7 +6,9 @@
 #define AMOUNT_OF_FUNGUS 31
 #define CENTIPEDE_BODY_SIZE 14
 
-void clearPosition(Object obj);
+#define speed_of_the_game 20
+
+void clearPosition(Object *obj);
 void updateScore();
 void resetGlobalVariables();
 void welcomeScreen();
@@ -72,7 +74,7 @@ int main()
             puts("EXCELLENT!");
         }
 
-        delay_ms(20); //Regulates game movement
+        delay_ms(speed_of_the_game); //Regulates game movement
 
         updateScore();
 
@@ -93,14 +95,14 @@ int main()
             //If the player shot a bullet, then call handle bullet but using the player's location to spawn new bullet on top of the player
             if (bulletWasPressed)
             {
-                clearPosition(bullet);
+                clearPosition(&bullet);
                 HandleBullet(player.y - 1, player.x);
                 bulletWasPressed = false;
             }
             else
             {
                 //Else, keep grabbing the bullet's current position and moving the bullet up until it reaches the top end screen
-                clearPosition(bullet);
+                clearPosition(&bullet);
                 bullet.y--;
 
                 HandleBullet(bullet.y, bullet.x);
@@ -141,7 +143,7 @@ void HandleCentipede()
         if (centipede_body[i].isDead)
             continue;
 
-        clearPosition(centipede_body[i].location);
+        clearPosition(&centipede_body[i].location);
 
         if (centipede_body[i].isComing == COMING_DOWN)
         {
@@ -302,9 +304,9 @@ void HandleCentipede()
 void HandleSpider()
 {
     //Spider takes two columns, soo clear both of them
-    clearPosition(spider.location);
+    clearPosition(&spider.location);
     spider.location.x++;
-    clearPosition(spider.location);
+    clearPosition(&spider.location);
     spider.location.x--;
 
     // //Implement the same logic as the one in handle centipede
@@ -443,7 +445,7 @@ void HandlePlayer()
                 //cant move to the left
                 if (is_going_to_hit_a_fungus(player.x - 1, player.y) == false)
                 {
-                    clearPosition(player);
+                    clearPosition(&player);
                     player.x--;
                 }
             }
@@ -462,7 +464,7 @@ void HandlePlayer()
             {
                 if (is_going_to_hit_a_fungus(player.x + 1, player.y) == false)
                 {
-                    clearPosition(player);
+                    clearPosition(&player);
                     player.x++;
                 }
             }
@@ -481,7 +483,7 @@ void HandlePlayer()
             {
                 if (is_going_to_hit_a_fungus(player.x, player.y + 1) == false)
                 {
-                    clearPosition(player);
+                    clearPosition(&player);
                     player.y++;
                 }
             }
@@ -499,7 +501,7 @@ void HandlePlayer()
             {
                 if (is_going_to_hit_a_fungus(player.x, player.y - 1) == false)
                 {
-                    clearPosition(player);
+                    clearPosition(&player);
                     player.y--;
                 }
             }
@@ -618,13 +620,12 @@ void paintFungus()
     set_color(fgColor, bgColor);
 }
 
-/* void paintCentipede(CentipedeObj *centipede)
+void paintCentipede(CentipedeObj *centipede)
 {
     if (centipede->isDead)
         return;
 
     set_cursor(centipede->location.y, centipede->location.x);
-    uint_8t x, y;
 
     get_color(&fgColor, &bgColor);
 
@@ -677,7 +678,7 @@ void paintFungus()
 
     //Restore color
     set_color(fgColor, bgColor);
-} */
+}
 
 void set_fungus_in_array_and_print(uint8_t index, uint8_t x, uint8_t y)
 {
@@ -744,32 +745,32 @@ void bulletCollisionDetector()
     bullet_and_centipede_collision_detector();
 }
 
-void bullet_and_fungus_collision_detector()
-{
-    //Detect if the bullet collided with fongus
-    for (uint8_t i = 0; i < AMOUNT_OF_FUNGUS; i++)
-    {
-        if (bullet.x == fungus[i].x && bullet.y == fungus[i].y)
-        {
-            /* set_cursor(bullet.y, bullet.x);
-            puts("Collision boy"); */
-            score++;
+// void bullet_and_fungus_collision_detector()
+// {
+//     //Detect if the bullet collided with fongus
+//     for (uint8_t i = 0; i < AMOUNT_OF_FUNGUS; i++)
+//     {
+//         if (bullet.x == fungus[i].x && bullet.y == fungus[i].y)
+//         {
+//             /* set_cursor(bullet.y, bullet.x);
+//             puts("Collision boy"); */
+//             score++;
 
-            /* Set the fungus position to 250 soo when the bullet hits it, 
-               it would no longer be invisible and keep registering collisions
-               eventhough it already did. In other words, this avoids the bullet
-               from hitting the same fungus over again */
-            fungus[i].x = fungus[i].y = 250;
+//             /* Set the fungus position to 250 soo when the bullet hits it,
+//                it would no longer be invisible and keep registering collisions
+//                eventhough it already did. In other words, this avoids the bullet
+//                from hitting the same fungus over again */
+//             fungus[i].x = fungus[i].y = 250;
 
-            //Clean the bullet
-            clearPosition(bullet);
-            bullet.x = bullet.y = 230; //Out of bound location soo that it wont register with anything else
-            shouldBulletBePainted = false;
+//             //Clean the bullet
+//             clearPosition(&bullet);
+//             bullet.x = bullet.y = 230; //Out of bound location soo that it wont register with anything else
+//             shouldBulletBePainted = false;
 
-            return;
-        }
-    }
-}
+//             return;
+//         }
+//     }
+// }
 void bullet_and_spider_collision_detector()
 {
     if ((bullet.x == spider.location.x || bullet.x == spider.location.x + 1) && bullet.y == spider.location.y)
@@ -779,9 +780,9 @@ void bullet_and_spider_collision_detector()
         puts("Spider got hit! Good job");
 
         //spider takes two column spaces long, so clear those two spaces
-        clearPosition(spider.location);
+        clearPosition(&spider.location);
         spider.location.x++;
-        clearPosition(spider.location);
+        clearPosition(&spider.location);
 
         uint8_t score_over_distance_kill = 0;
 
@@ -802,7 +803,7 @@ void bullet_and_spider_collision_detector()
             spider.location.x = 40;
 
         //Clean the bullet
-        clearPosition(bullet);
+        clearPosition(&bullet);
 
         //Print Score thing in the spider death location
         set_cursor(bullet.y, bullet.x);
@@ -826,7 +827,7 @@ void bullet_and_centipede_collision_detector()
             centipedes_remaining--;
 
             //Kill Centipede
-            clearPosition(centipede_body[i].location);
+            clearPosition(&centipede_body[i].location);
             centipede_body[i].isDead = true;
             uint8_t prevX = centipede_body[i].location.x;
             uint8_t prevY = centipede_body[i].location.y;
@@ -835,7 +836,7 @@ void bullet_and_centipede_collision_detector()
             //Change the rest of the centipedes' direction
             for (uint8_t j = i + 1; j < CENTIPEDE_BODY_SIZE; j++)
             {
-                clearPosition(centipede_body[j].location);
+                clearPosition(&centipede_body[j].location);
 
                 //If the centipede is killed in the bottom, it will try to move out of the screen, soo prevent that
                 if (centipede_body[j].location.y + 1 >= (MAX_ROWS - 1))
@@ -861,7 +862,7 @@ void bullet_and_centipede_collision_detector()
             }
 
             //Clean the bullet
-            clearPosition(bullet);
+            clearPosition(&bullet);
             bullet.x = bullet.y = 208; //Out of bound location soo that it wont register with anything else
             shouldBulletBePainted = false;
 
@@ -897,12 +898,12 @@ void playerCollisionDetector()
     }
 }
 
-void clearPosition(Object obj)
+void clearPosition(Object *obj)
 {
     /* Takes in any object and will write a null character in its location */
 
     //Clear last x and y
-    set_cursor(obj.y, obj.x);
+    set_cursor(obj->y, obj->x);
     put_char(255); //Write to that position an empty char
 }
 
