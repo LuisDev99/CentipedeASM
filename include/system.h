@@ -30,15 +30,15 @@ typedef struct Objects
 
 typedef struct CentipedesObjects
 {
-    Object location; // 0 - 15
-    bool isDead;     //16 - 17
-    bool isHead;     //18 - 19
+    Object location; // 0 - 1
+    bool isDead;     // 2
+    bool isHead;     // 3
 
     //Changing this to uints to iterate better in assembly
-    uint8_t currentDirection;
-    uint8_t previousDirection;
-    uint8_t isComing;
-    uint8_t uselessVariable; //Padding of 1 byte to make this struct of size 8 bytes
+    uint8_t currentDirection;  // 4
+    uint8_t previousDirection; // 5
+    uint8_t isComing;          // 6
+    uint8_t uselessVariable;   //Padding of 1 byte to make this struct of size 8 bytes
 
     //Old and big size code
     /* enum Directions currentDirection;  //20 - 23

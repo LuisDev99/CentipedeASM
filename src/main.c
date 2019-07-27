@@ -884,26 +884,26 @@ void bullet_and_centipede_collision_detector()
     }
 }
 
-void playerCollisionDetector()
-{
-    if ((player.x == spider.location.x || player.x == spider.location.x + 1) && player.y == spider.location.y)
-    {
-        registerPlayerDeath();
-        return;
-    }
+// void playerCollisionDetector()
+// {
+//     if ((player.x == spider.location.x || player.x == spider.location.x + 1) && player.y == spider.location.y)
+//     {
+//         registerPlayerDeath();
+//         return;
+//     }
 
-    for (uint8_t i = 0; i < CENTIPEDE_BODY_SIZE; i++)
-    {
-        if (centipede_body[i].isDead)
-            continue;
+//     for (uint8_t i = 0; i < CENTIPEDE_BODY_SIZE; i++)
+//     {
+//         if (centipede_body[i].isDead)
+//             continue;
 
-        if (player.x == centipede_body[i].location.x && player.y == centipede_body[i].location.y)
-        {
-            registerPlayerDeath();
-            return;
-        }
-    }
-}
+//         if (player.x == centipede_body[i].location.x && player.y == centipede_body[i].location.y)
+//         {
+//             registerPlayerDeath();
+//             return;
+//         }
+//     }
+// }
 
 void clearPosition(Object *obj)
 {
