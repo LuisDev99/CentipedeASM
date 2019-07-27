@@ -6,6 +6,13 @@
 #define AMOUNT_OF_FUNGUS 31
 #define CENTIPEDE_BODY_SIZE 14
 
+#define UP 0
+#define DOWN 1
+#define LEFT 2
+#define RIGHT 3
+#define COMING_UP 4
+#define COMING_DOWN 5
+
 #define speed_of_the_game 20
 
 void clearPosition(Object *obj);

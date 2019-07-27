@@ -20,17 +20,6 @@ typedef unsigned short int16_t;
 
 typedef volatile uint16_t *vga_ptr_t;
 
-enum Directions
-{
-    //size = 192
-    UP = 0,
-    DOWN = 1,
-    LEFT = 2,
-    RIGHT = 3,
-    COMING_UP = 4,
-    COMING_DOWN = 5
-};
-
 typedef struct Objects
 {
     //size = 2 bytez
@@ -45,9 +34,16 @@ typedef struct CentipedesObjects
     bool isDead;     //16 - 17
     bool isHead;     //18 - 19
 
-    enum Directions currentDirection;  //20 - 23
+    //Changing this to uints to iterate better in assembly
+    uint8_t currentDirection;
+    uint8_t previousDirection;
+    uint8_t isComing;
+    uint8_t uselessVariable; //Padding of 1 byte to make this struct of size 8 bytes
+
+    //Old and big size code
+    /* enum Directions currentDirection;  //20 - 23
     enum Directions previousDirection; //24 - 27
-    enum Directions isComing;          //28 - 31
+    enum Directions isComing;          //28 - 31 */
 
 } CentipedeObj;
 
@@ -55,9 +51,15 @@ typedef struct SpiderObjects
 {
     Object location; //0 - 15
 
-    enum Directions currentDirection;  //16 - 19
+    //Changing this to uints to iterate better in assembly
+    uint8_t currentDirection;
+    uint8_t previousDirection;
+    uint8_t isComing;
+    uint8_t uselessVariable, x2, x3; //Padding of 3 byte to make this struct of size 8 bytes
+
+    /*enum Directions currentDirection;  //16 - 19
     enum Directions previousDirection; //20 - 23
-    enum Directions isComing;          //24 - 27
+    enum Directions isComing;          //24 - 27 */
 
 } SpiderObj;
 
