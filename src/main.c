@@ -37,11 +37,11 @@ void set_fungus_in_array_and_print(uint8_t index, uint8_t x, uint8_t y);
 void initializeCentipede();
 
 void bulletCollisionDetector();
-void bullet_and_fungus_collision_detector(); //Assembled this
+void bullet_and_fungus_collision_detector(); //Assembled this - DONE
 void bullet_and_spider_collision_detector();
 void bullet_and_centipede_collision_detector();
 
-void playerCollisionDetector(); //Assembled this
+void playerCollisionDetector(); //Assembled this - DONE
 
 bool is_going_to_hit_a_fungus(uint8_t objX, uint8_t objY);
 
@@ -627,65 +627,65 @@ void paintFungus()
     set_color(fgColor, bgColor);
 }
 
-void paintCentipede(CentipedeObj *centipede)
-{
-    if (centipede->isDead)
-        return;
+// void paintCentipede(CentipedeObj *centipede)
+// {
+//     if (centipede->isDead)
+//         return;
 
-    set_cursor(centipede->location.y, centipede->location.x);
+//     set_cursor(centipede->location.y, centipede->location.x);
 
-    get_color(&fgColor, &bgColor);
+//     get_color(&fgColor, &bgColor);
 
-    set_color(LIGHT_GREEN, BLACK);
+//     set_color(LIGHT_GREEN, BLACK);
 
-    if (centipede->currentDirection == UP)
-    {
-        if (centipede->isHead)
-        {
-            put_char(12);
-        }
-        else
-        {
-            put_char(11);
-        }
-    }
-    else if (centipede->currentDirection == DOWN)
-    {
-        if (centipede->isHead)
-        {
-            put_char(8);
-        }
-        else
-        {
-            put_char(7);
-        }
-    }
-    else if (centipede->currentDirection == LEFT)
-    {
-        if (centipede->isHead)
-        {
-            put_char(2);
-        }
-        else
-        {
-            put_char(1);
-        }
-    }
-    else if (centipede->currentDirection == RIGHT)
-    {
-        if (centipede->isHead)
-        {
-            put_char(22);
-        }
-        else
-        {
-            put_char(9);
-        }
-    }
+//     if (centipede->currentDirection == UP)
+//     {
+//         if (centipede->isHead)
+//         {
+//             put_char(12);
+//         }
+//         else
+//         {
+//             put_char(11);
+//         }
+//     }
+//     else if (centipede->currentDirection == DOWN)
+//     {
+//         if (centipede->isHead)
+//         {
+//             put_char(8);
+//         }
+//         else
+//         {
+//             put_char(7);
+//         }
+//     }
+//     else if (centipede->currentDirection == LEFT)
+//     {
+//         if (centipede->isHead)
+//         {
+//             put_char(2);
+//         }
+//         else
+//         {
+//             put_char(1);
+//         }
+//     }
+//     else if (centipede->currentDirection == RIGHT)
+//     {
+//         if (centipede->isHead)
+//         {
+//             put_char(22);
+//         }
+//         else
+//         {
+//             put_char(9);
+//         }
+//     }
 
-    //Restore color
-    set_color(fgColor, bgColor);
-}
+//     //Restore color
+//     set_color(fgColor, bgColor);
+// }
 
 void set_fungus_in_array_and_print(uint8_t index, uint8_t x, uint8_t y)
 {
