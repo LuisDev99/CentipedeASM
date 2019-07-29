@@ -1,10 +1,14 @@
 #include <screen.h>
 #include <keypad.h>
+#include <handle_events.h>
+#include <collision_events.h>
+#include <paint_events.h>
+#include <initializers.h>
 
 #define TO_STR(ch) ((((ch) >= 0) && ((ch) <= 9)) ? (48 + (ch)) : ('a' + ((ch)-10)))
 
-#define AMOUNT_OF_FUNGUS 31
-#define CENTIPEDE_BODY_SIZE 14
+#define AMOUNT_OF_FUNGUS 31    // If this value is change, change it in the assemblies as well
+#define CENTIPEDE_BODY_SIZE 14 // X2
 
 #define UP 0
 #define DOWN 1
@@ -14,36 +18,6 @@
 #define COMING_DOWN 5
 
 #define speed_of_the_game 20
-
-void clearPosition(Object *obj);
-void updateScore();
-void resetGlobalVariables();
-void welcomeScreen();
-
-void registerPlayerDeath();
-
-void HandlePlayer();
-void HandleSpider();
-void HandleBullet(uint8_t objYPos, uint8_t objXPos);
-
-void HandleCentipede();
-
-void paintFungus();
-void paintPlayer(Object player);
-void paintBullet(Object bullet);
-void paintSpider(Object spider);
-//void paintCentipede(CentipedeObj *centipede); //Assembled this
-void set_fungus_in_array_and_print(uint8_t index, uint8_t x, uint8_t y);
-void initializeCentipede();
-
-void bulletCollisionDetector();
-void bullet_and_fungus_collision_detector(); //Assembled this - DONE
-void bullet_and_spider_collision_detector();
-void bullet_and_centipede_collision_detector();
-
-void playerCollisionDetector(); //Assembled this - DONE
-
-bool is_going_to_hit_a_fungus(uint8_t objX, uint8_t objY);
 
 uint8_t fgColor, bgColor;
 

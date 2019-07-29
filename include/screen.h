@@ -34,8 +34,6 @@ void put_char(uint8_t ch);
 void puts(const char *message);
 void clear_screen();
 
-void paintCentipede(CentipedeObj *centipede); //Assembled this
-
 #endif
 
 #endif

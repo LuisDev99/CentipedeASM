@@ -23,8 +23,8 @@ typedef volatile uint16_t *vga_ptr_t;
 typedef struct Objects
 {
     //size = 2 bytez
-    uint8_t x; // 0 - 7
-    uint8_t y; // 8 - 15
+    uint8_t x; // 0
+    uint8_t y; // 1
 
 } Object;
 
@@ -38,7 +38,7 @@ typedef struct CentipedesObjects
     uint8_t currentDirection;  // 4
     uint8_t previousDirection; // 5
     uint8_t isComing;          // 6
-    uint8_t uselessVariable;   //Padding of 1 byte to make this struct of size 8 bytes
+    uint8_t uselessVariable;   // 7 - Create this variable to make padding of 1 byte to make this struct of size 8 bytes
 
     //Old and big size code
     /* enum Directions currentDirection;  //20 - 23
@@ -49,17 +49,13 @@ typedef struct CentipedesObjects
 
 typedef struct SpiderObjects
 {
-    Object location; //0 - 15
+    Object location; //0 - 1
 
     //Changing this to uints to iterate better in assembly
-    uint8_t currentDirection;
-    uint8_t previousDirection;
-    uint8_t isComing;
-    uint8_t uselessVariable, x2, x3; //Padding of 3 byte to make this struct of size 8 bytes
-
-    /*enum Directions currentDirection;  //16 - 19
-    enum Directions previousDirection; //20 - 23
-    enum Directions isComing;          //24 - 27 */
+    uint8_t currentDirection;        // 2
+    uint8_t previousDirection;       // 3
+    uint8_t isComing;                // 4
+    uint8_t uselessVariable, x2, x3; // 5 - 7 Create this 3 variables to make padding of 3 byte to make this struct of size 8 bytes
 
 } SpiderObj;
 
